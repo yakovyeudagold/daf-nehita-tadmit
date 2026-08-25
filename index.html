@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=no">
+  <title>KOVKOV, בניית אתרים</title>
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <meta name="description" content="דמו מעוצב במלואו לאתר התדמית של העסק שלך, בחינם. משאירים שם וטלפון ומקבלים דמו מותאם.">
+
+  <!-- Assistant: גרוטסק עברי נקי וגיאומטרי, הקרוב ביותר לתחושת ה-SF של אפל -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       1. משתני עיצוב
+       שפה מינימליסטית: שחור עמוק, אפורים מדויקים, ואקסנט מדוד
+       ============================================================ */
+    :root {
+      --black:      #000000;   /* רקע ראשי - שחור מלא, כמו אפל */
+      --near-black: #08080C;   /* רקע מקטע משני */
+      --surface:    #16161B;   /* משטח כרטיסים כהים */
+      --light:      #F5F5F7;   /* מקטע בהיר - הניגוד החתום של אפל */
+      --white:      #FFFFFF;
+
+      --ink:        #1D1D1F;   /* טקסט כהה על רקע בהיר */
+      --ink-dim:    #6E6E73;   /* טקסט משני על רקע בהיר */
+      --text:       #F5F5F7;   /* טקסט בהיר על רקע כהה */
+      --text-dim:   #A1A1A6;   /* טקסט משני על רקע כהה */
+
+      --purple:     #6C4DFF;   /* צבע הפעולה */
+      --purple-lit: #7D61FF;   /* גוון בהיר יותר למצבי hover */
+      --lime:       #C6FF4D;   /* אקסנט נקודתי בלבד */
+
+      --hairline:      rgba(245, 245, 247, 0.11);
+      --hairline-2:    rgba(245, 245, 247, 0.20);
+      --hairline-dark: rgba(0, 0, 0, 0.10);
+
+      --r-sm:  14px;
+      --r-md:  22px;
+      --r-lg:  32px;
+      --maxw:  1120px;
+      --gutter: 22px;
+      --nav-h:  48px;
+
+      /* העקומה של אפל - האטה ארוכה ורכה */
+      --ease: cubic-bezier(0.28, 0.11, 0.32, 1);
+    }
+
+    @media (min-width: 640px)  { :root { --gutter: 36px; } }
+    @media (min-width: 1024px) { :root { --gutter: 56px; --nav-h: 52px; } }
+
+    /* ============================================================
+       2. יסודות
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--black);
+      color: var(--text);
+      /* קודם כל הפונט המערכתי של אפל, ואז Assistant לשאר המכשירים */
+      font-family: -apple-system, BlinkMacSystemFont, 'Assistant', 'Segoe UI', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: 17px;
+      line-height: 1.47;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: clip;
+    }
+
+    img { max-width: 100%; display: block; }
+    a, button { -webkit-tap-highlight-color: transparent; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--purple);
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
+    /* על רקע בהיר הסגול נשאר קריא, על רקע כהה נבחר ליים לבהירות */
+    .on-dark a:focus-visible,
+    .on-dark button:focus-visible,
+    .on-dark input:focus-visible { outline-color: var(--lime); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      inset-inline-start: 12px;
+      top: -120px;
+      z-index: 999;
+      background: var(--white);
+      color: var(--ink);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: top 0.2s var(--ease);
+    }
+    .skip-link:focus { top: 12px; }
+
+    /* ============================================================
+       3. פריסה
+       ============================================================ */
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    section { position: relative; }
+    section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
+
+    /* מרווחים נדיבים - זה מה שיוצר את תחושת השקט והיוקרה */
+    .section-pad { padding-block: clamp(90px, 14vw, 180px); }
+
+    .section-light { background: var(--light); color: var(--ink); }
+    .section-dim   { background: var(--near-black); }
+
+    /* ============================================================
+       4. טיפוגרפיה
+       משקלים בינוניים ולא כבדים, מרווח אותיות שלילי, שורות צפופות
+       ============================================================ */
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--lime);
+      margin: 0 0 18px;
+    }
+    .eyebrow .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+    .section-light .eyebrow { color: var(--purple); }
+    .section-light .eyebrow .dot { background: var(--purple); }
+
+    h1, h2, h3 { font-weight: 600; letter-spacing: -0.03em; margin: 0; }
+
+    .display {
+      font-size: clamp(2.6rem, 9vw, 5.4rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.038em;
+      text-wrap: balance;
+    }
+
+    .title {
+      font-size: clamp(2rem, 6.2vw, 3.4rem);
+      line-height: 1.08;
+      letter-spacing: -0.032em;
+      text-wrap: balance;
+    }
+
+    .sub {
+      font-size: clamp(1.06rem, 3.6vw, 1.32rem);
+      font-weight: 400;
+      line-height: 1.42;
+      letter-spacing: -0.012em;
+      color: var(--text-dim);
+      margin: 18px 0 0;
+      text-wrap: pretty;
+    }
+    .section-light .sub { color: var(--ink-dim); }
+
+    /* הדגשה עדינה במעבר צבע - במקום צבע שטוח וצעקני */
+    .accent {
+      background: linear-gradient(100deg, var(--lime) 10%, #9BE83C 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ============================================================
+       5. כפתורים וקישורים
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      font-family: inherit;
+      font-size: 1.02rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      border: none;
+      border-radius: 980px;              /* הפיל הקלאסי */
+      padding: 12px 30px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s var(--ease),
+                  color 0.3s var(--ease),
+                  border-color 0.3s var(--ease),
+                  opacity 0.3s var(--ease),
+                  transform 0.3s var(--ease);
+    }
+    .btn-primary { background: var(--purple); color: var(--white); }
+    .btn-quiet {
+      background: rgba(245, 245, 247, 0.1);
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .section-light .btn-quiet { background: rgba(0, 0, 0, 0.06); color: var(--ink); }
+    .btn:active { transform: scale(0.98); }
+
+    /* קישור טקסט עם שברון - דפוס חוזר באתרי אפל */
+    .link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 44px;
+      font-size: 1.02rem;
+      font-weight: 400;
+      color: var(--purple);
+      text-decoration: none;
+      transition: opacity 0.25s var(--ease);
+    }
+    .link .chev { transition: transform 0.3s var(--ease); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover { background: #7D61FF; }
+      .btn-quiet:hover   { background: rgba(245, 245, 247, 0.16); }
+      .section-light .btn-quiet:hover { background: rgba(0, 0, 0, 0.1); }
+      .link:hover { text-decoration: underline; }
+      .link:hover .chev { transform: translateX(-3px); }
+    }
+
+    /* ============================================================
+       6. חשיפה בגלילה - עדינה וארוכה
+       ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 1s var(--ease), transform 1s var(--ease);
+    }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    /* ============================================================
+       7. סרגל ניווט זכוכיתי
+       ============================================================ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--hairline);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+      max-width: var(--maxw);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--nav-h);
+      width: 132px;
+      overflow: hidden;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .brand img {
+      display: block;
+      height: 118px;
+      width: 118px;
+      max-width: none;
+      object-fit: cover;
+      object-position: center;
+    }
+    .nav-links { display: flex; align-items: center; gap: 30px; }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(245, 245, 247, 0.82);
+      text-decoration: none;
+      transition: color 0.25s var(--ease);
+    }
+    .nav-cta {
+      min-height: 32px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-links a:hover { color: var(--white); }
+    }
+    @media (max-width: 820px) { .nav-links { display: none; } }
+
+    /* ============================================================
+       8. HERO
+       ============================================================ */
+    .hero {
+      text-align: center;
+      padding-block: clamp(70px, 13vw, 130px) clamp(60px, 10vw, 100px);
+      overflow: visible;
+    }
+
+    /* זוהר רך אחד בלבד ברקע - רמז לעומק, בלי דרמה */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -22%;
+      inset-inline-start: 50%;
+      transform: translateX(50%);
+      width: min(120vw, 900px);
+      aspect-ratio: 1.6;
+      background: radial-gradient(ellipse at center, rgba(108, 77, 255, 0.28), transparent 62%);
+      pointer-events: none;
+    }
+    .hero .container { position: relative; z-index: 1; }
+
+    .hero .display { margin-inline: auto; max-width: 16ch; }
+    .hero .sub { margin-inline: auto; max-width: 44ch; }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px 26px;
+      margin-top: 34px;
+    }
+
+    .hero-visual-wrap {
+      margin-top: clamp(28px, 5vw, 56px);
+    }
+
+    .frame-scroll {
+      height: 165vh;
+    }
+    .frame-sticky {
+      position: sticky;
+      top: calc(var(--nav-h) + 8px);
+      height: calc(100svh - var(--nav-h) - 16px);
+      display: grid;
+      place-items: center;
+    }
+
+    .build {
+      --ease-snap: cubic-bezier(0.22, 1.35, 0.36, 1);
+      --frame-scale: 0.56;
+      position: relative;
+      width: min(920px, 94vw);
+      aspect-ratio: 16 / 10;
+      margin-inline: auto;
+      overflow: visible;
+      touch-action: pan-y;
+      background: transparent;
+      direction: ltr;
+      transform: scale(var(--frame-scale));
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    .build-glow {
+      position: absolute;
+      inset: 8% 6% -30%;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 42% 48%, rgba(108, 77, 255, 0.45), transparent 55%),
+        radial-gradient(ellipse at 70% 60%, rgba(198, 255, 77, 0.12), transparent 45%);
+      opacity: 0.35;
+    }
+    .build.is-playing .build-glow,
+    .build.is-alive .build-glow {
+      animation: glowPulse 4.5s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+    }
+
+    .build-grid {
+      position: absolute;
+      left: -14%;
+      right: -14%;
+      top: 18%;
+      bottom: -42%;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(108, 77, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 77, 255, 0.18) 1px, transparent 1px);
+      background-size: 42px 42px;
+      transform: perspective(700px) rotateX(68deg) scale(1.4);
+      mask-image: radial-gradient(ellipse at 50% 28%, #000 18%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 28%, #000 18%, transparent 70%);
+      opacity: 0.35;
+    }
+    .build.is-alive .build-grid {
+      animation: gridDrift 18s linear infinite;
+    }
+    @keyframes gridDrift {
+      to { background-position: 0 42px; }
+    }
+
+    .build-stars i {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(198, 255, 77, 0.8);
+    }
+    .build.is-playing .build-stars i,
+    .build.is-alive .build-stars i { opacity: 0.55; }
+    .build-stars i:nth-child(1) { left: 12%; top: 18%; animation: starDrift 7s ease-in-out infinite; }
+    .build-stars i:nth-child(2) { left: 78%; top: 22%; width: 2px; height: 2px; animation: starDrift 9s ease-in-out 1s infinite; }
+    .build-stars i:nth-child(3) { left: 22%; top: 70%; animation: starDrift 8s ease-in-out 0.4s infinite; }
+    .build-stars i:nth-child(4) { left: 88%; top: 58%; animation: starDrift 6s ease-in-out 0.8s infinite; }
+    .build-stars i:nth-child(5) { left: 48%; top: 12%; width: 2px; height: 2px; animation: starDrift 10s ease-in-out infinite; }
+    .build-stars i:nth-child(6) { left: 63%; top: 80%; animation: starDrift 7.5s ease-in-out 1.2s infinite; }
+    .build-stars i:nth-child(7) { left: 8%; top: 42%; animation: starDrift 11s ease-in-out 0.2s infinite; }
+    .build-stars i:nth-child(8) { left: 91%; top: 36%; animation: starDrift 8.5s ease-in-out 0.6s infinite; }
+    @keyframes starDrift {
+      0%, 100% { transform: translateY(0); opacity: 0.25; }
+      50% { transform: translateY(-18px); opacity: 0.8; }
+    }
+
+    .build-hud {
+      position: absolute;
+      z-index: 8;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: clamp(0.62rem, 1.5vw, 0.78rem);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(245, 245, 247, 0.55);
+    }
+    .build-timer {
+      font-variant-numeric: tabular-nums;
+      color: var(--lime);
+      letter-spacing: 0.08em;
+    }
+    .build-step { direction: rtl; font-weight: 500; }
+
+    .build-world {
+      position: absolute;
+      inset: 8% 3% 16%;
+      perspective: 1800px;
+      perspective-origin: 50% 45%;
+      transform-style: preserve-3d;
+    }
+
+    .cam-rig {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .build.is-playing .cam-rig {
+      animation: camIn 5.2s var(--ease) forwards;
+    }
+    .build.is-alive .cam-rig {
+      animation: camDrift 10s ease-in-out infinite;
+    }
+    @keyframes camIn {
+      0%   { transform: rotateX(22deg) rotateY(-18deg) scale(0.82) translateY(24px); }
+      55%  { transform: rotateX(10deg) rotateY(-10deg) scale(0.98); }
+      100% { transform: rotateX(6deg) rotateY(-8deg) scale(1); }
+    }
+    @keyframes camDrift {
+      0%, 100% { transform: rotateX(calc(6deg + var(--tilt-x))) rotateY(calc(-8deg + var(--tilt-y))) scale(1); }
+      50%      { transform: rotateX(calc(10deg + var(--tilt-x))) rotateY(calc(6deg + var(--tilt-y))) scale(1.04); }
+    }
+
+    .site-stage {
+      position: relative;
+      width: min(78%, 620px);
+      aspect-ratio: 16 / 10;
+      transform-style: preserve-3d;
+    }
+
+    .site-shadow {
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      top: 92%;
+      height: 18%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(108, 77, 255, 0.35), transparent 70%);
+      filter: blur(8px);
+      transform: rotateX(90deg) translateZ(-20px);
+      opacity: 0;
+    }
+    .build.is-playing .site-shadow,
+    .build.is-alive .site-shadow { opacity: 1; }
+
+    .live-site {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #0b0b12;
+      box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+      opacity: 1;
+      transform: none;
+    }
+    .build.is-playing .live-site,
+    .build.is-alive .live-site,
+    .build.is-finished .live-site {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+    @keyframes siteArrive {
+      0%   { opacity: 0; transform: translateZ(-420px) rotateX(18deg) scale(0.6); }
+      75%  { opacity: 1; transform: translateZ(24px) rotateX(-2deg) scale(1.03); }
+      100% { opacity: 1; transform: none; }
+    }
+
+    .live-site::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.14) 50%, transparent 58%);
+      transform: translateX(-130%);
+    }
+    .build.is-alive .live-site::after {
+      animation: shineSweep 3.8s ease-in-out 0.4s infinite;
+    }
+    @keyframes shineSweep {
+      0% { transform: translateX(-130%); }
+      40%, 100% { transform: translateX(130%); }
+    }
+
+    .live-chrome {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 11%;
+      padding: 0 12px;
+      background: rgba(18, 18, 24, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transform: translateZ(16px);
+    }
+    .live-chrome i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3a3a42;
+    }
+    .live-chrome i:nth-child(1) { background: #ff5f57; }
+    .live-chrome i:nth-child(2) { background: #febc2e; }
+    .live-chrome i:nth-child(3) { background: #28c840; }
+    .live-chrome em {
+      margin-inline-start: auto;
+      font-style: normal;
+      font-size: clamp(0.48rem, 1.2vw, 0.68rem);
+      color: rgba(255, 255, 255, 0.38);
+      letter-spacing: 0.02em;
+    }
+
+    .live-nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.6vw, 16px);
+      height: 12%;
+      padding: 0 14px;
+      direction: rtl;
+      transform: translateZ(28px);
+    }
+    .live-nav b {
+      margin-inline-end: auto;
+      font-size: clamp(0.58rem, 1.5vw, 0.82rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #fff;
+    }
+    .live-nav span {
+      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .live-hero {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      direction: rtl;
+      height: 52%;
+      min-height: 0;
+      padding: 2% 3%;
+      overflow: visible;
+      transform-style: preserve-3d;
+      background:
+        radial-gradient(ellipse at 70% 40%, rgba(108, 77, 255, 0.28), transparent 55%),
+        linear-gradient(180deg, #101018 0%, #0b0b12 100%);
+    }
+
+    .orb-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      height: 100%;
+      overflow: visible;
+      perspective: 700px;
+      transform-style: preserve-3d;
+    }
+    .orb {
+      position: relative;
+      width: min(88%, 170px);
+      max-height: 100%;
+      aspect-ratio: 1;
+      transform-style: preserve-3d;
+      overflow: visible;
+      opacity: 0;
+      transform: scale(0.2);
+    }
+    .build.is-playing .orb {
+      animation: orbIn 0.8s var(--ease-snap) 1.15s forwards;
+    }
+    .build.is-alive .orb,
+    .build.is-finished .orb {
+      opacity: 1;
+      transform: scale(1);
+      animation: none;
+    }
+    @keyframes orbIn {
+      0%   { opacity: 0; transform: scale(0.2); }
+      70%  { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .tilt {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      pointer-events: none;
+      backface-visibility: visible;
+    }
+    .t1 { animation: orbit1 7s linear infinite; }
+    .t2 { animation: orbit2 11s linear infinite reverse; }
+    .t3 { animation: orbit3 9s linear infinite; }
+    @keyframes orbit1 {
+      from { transform: rotateX(62deg) rotateY(0deg); }
+      to   { transform: rotateX(62deg) rotateY(360deg); }
+    }
+    @keyframes orbit2 {
+      from { transform: rotateX(-58deg) rotateY(0deg); }
+      to   { transform: rotateX(-58deg) rotateY(360deg); }
+    }
+    @keyframes orbit3 {
+      from { transform: rotateX(40deg) rotateZ(55deg) rotateY(0deg); }
+      to   { transform: rotateX(40deg) rotateZ(55deg) rotateY(360deg); }
+    }
+    .ring {
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 3px solid rgba(198, 255, 77, 0.88);
+      box-shadow:
+        0 0 18px rgba(108, 77, 255, 0.7),
+        inset 0 0 16px rgba(108, 77, 255, 0.35);
+      backface-visibility: visible;
+    }
+    .t2 .ring {
+      inset: 17%;
+      border-color: rgba(108, 77, 255, 0.95);
+    }
+    .t3 .ring {
+      inset: 26%;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+    .core {
+      position: absolute;
+      inset: 32%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 28%, #fff 0%, #c6ff4d 14%, #6c4dff 48%, #12061f 72%);
+      box-shadow:
+        0 0 22px #6c4dff,
+        0 0 48px rgba(198, 255, 77, 0.45),
+        0 0 80px rgba(108, 77, 255, 0.35);
+    }
+    .build.is-alive .core {
+      animation: corePulse 2.2s ease-in-out infinite;
+    }
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.12); filter: brightness(1.25); }
+    }
+
+    .live-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 4% 2% 4% 6%;
+      text-align: right;
+      transform: translateZ(48px);
+    }
+    .live-copy small {
+      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--lime);
+      opacity: 0;
+    }
+    .live-copy h3 {
+      margin: 0;
+      font-size: clamp(1.15rem, 3.2vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .live-copy p {
+      margin: 0;
+      font-size: clamp(0.48rem, 1.2vw, 0.7rem);
+      color: rgba(255, 255, 255, 0.55);
+      opacity: 0;
+    }
+    .live-btn {
+      display: inline-flex;
+      margin-top: 4px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      background: var(--purple);
+      color: #fff;
+      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(108, 77, 255, 0.45);
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    .build.is-playing .live-copy small { animation: fadeUp 0.45s var(--ease) 1.7s forwards; }
+    .build.is-playing .live-copy h3    { animation: fadeUp 0.5s var(--ease) 1.9s forwards; }
+    .build.is-playing .live-copy p     { animation: fadeUp 0.45s var(--ease) 2.1s forwards; }
+    .build.is-playing .live-btn        { animation: popIn 0.4s var(--ease-snap) 2.3s forwards; }
+    .build.is-alive .live-copy small,
+    .build.is-alive .live-copy h3,
+    .build.is-alive .live-copy p,
+    .build.is-alive .live-btn,
+    .build.is-finished .live-copy small,
+    .build.is-finished .live-copy h3,
+    .build.is-finished .live-copy p,
+    .build.is-finished .live-btn {
+      opacity: 1;
+      transform: none;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes popIn {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .live-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2.5%;
+      height: 25%;
+      padding: 1.5% 3% 3%;
+      transform-style: preserve-3d;
+    }
+    .live-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #16161f;
+      opacity: 0;
+      transform: translateZ(-180px) translateY(30px) scale(0.8);
+    }
+    .live-card i {
+      display: block;
+      height: 62%;
+      background-size: cover;
+      background-position: center;
+    }
+    .live-card:nth-child(1) i {
+      background-image:
+        linear-gradient(180deg, transparent 30%, #0b0b12 100%),
+        url("https://images.unsplash.com/photo-1634017839464-5c339ebe3cb8?auto=format&fit=crop&w=400&q=70");
+      background-color: #3a2470;
+    }
+    .live-card:nth-child(2) i {
+      background-image:
+        linear-gradient(180deg, transparent 30%, #0b0b12 100%),
+        url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=70");
+      background-color: #3a5a18;
+    }
+    .live-card:nth-child(3) i {
+      background-image:
+        linear-gradient(180deg, transparent 30%, #0b0b12 100%),
+        url("https://images.unsplash.com/photo-1633167606207-d840b5070fc2?auto=format&fit=crop&w=400&q=70");
+      background-color: #1a1433;
+    }
+    .live-card b {
+      display: block;
+      padding: 4px 8px 0;
+      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      font-weight: 700;
+      color: #fff;
+      direction: rtl;
+    }
+    .build.is-playing .live-card:nth-child(1) { animation: cardIn 0.55s var(--ease-snap) 2.55s forwards; }
+    .build.is-playing .live-card:nth-child(2) { animation: cardIn 0.55s var(--ease-snap) 2.72s forwards; }
+    .build.is-playing .live-card:nth-child(3) { animation: cardIn 0.55s var(--ease-snap) 2.89s forwards; }
+    @keyframes cardIn {
+      0%   { opacity: 0; transform: translateY(40px) scale(0.75); }
+      70%  { opacity: 1; transform: translateY(-6px) scale(1.04); }
+      100% { opacity: 1; transform: none; }
+    }
+    .build.is-alive .live-card,
+    .build.is-finished .live-card { opacity: 1; }
+    .build.is-alive .live-card:nth-child(1) { animation: floatZ 3.2s ease-in-out infinite; }
+    .build.is-alive .live-card:nth-child(2) { animation: floatZ 3.2s ease-in-out 0.4s infinite; }
+    .build.is-alive .live-card:nth-child(3) { animation: floatZ 3.2s ease-in-out 0.8s infinite; }
+    @keyframes floatZ {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.04); }
+    }
+
+    .build-phone {
+      position: absolute;
+      right: 4%;
+      top: 18%;
+      width: min(18%, 96px);
+      aspect-ratio: 9 / 19;
+      z-index: 4;
+      opacity: 0;
+      transform: translate3d(80px, 40px, -120px) rotateY(-25deg) rotate(18deg);
+      transform-style: preserve-3d;
+    }
+    .ph-bezel {
+      height: 100%;
+      border-radius: 16px;
+      padding: 8% 7%;
+      background: #0a0a0c;
+      border: 2px solid #3a3a40;
+      box-shadow:
+        0 22px 44px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .ph-notch {
+      width: 38%;
+      height: 4%;
+      margin: 0 auto 7%;
+      border-radius: 100px;
+      background: #000;
+    }
+    .ph-ui {
+      height: 84%;
+      display: flex;
+      flex-direction: column;
+      gap: 6%;
+      direction: rtl;
+    }
+    .ph-nav {
+      height: 9%;
+      border-radius: 4px;
+      background: #1c1c26;
+    }
+    .ph-hero {
+      flex: 1;
+      border-radius: 6px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(108, 77, 255, 0.85), transparent 55%),
+        radial-gradient(circle at 50% 50%, #c6ff4d 0%, transparent 28%),
+        #121018;
+      animation: phGlow 2.8s ease-in-out infinite;
+    }
+    .ph-card { height: 14%; border-radius: 4px; background: #1c1c26; }
+    .build.is-playing .build-phone {
+      animation: phoneFly 0.85s var(--ease-snap) 3.5s forwards;
+    }
+    .build.is-alive .build-phone,
+    .build.is-finished .build-phone {
+      opacity: 1;
+      transform: rotateY(-8deg) rotate(-8deg) translateZ(70px);
+    }
+    .build.is-alive .build-phone {
+      animation: phoneHover 4s ease-in-out infinite;
+    }
+    @keyframes phoneFly {
+      to { opacity: 1; transform: rotateY(-8deg) rotate(-8deg) translateZ(70px); }
+    }
+    @keyframes phoneHover {
+      0%, 100% { transform: rotateY(-8deg) rotate(-8deg) translateZ(70px) translateY(0); }
+      50% { transform: rotateY(-4deg) rotate(-6deg) translateZ(88px) translateY(-8px); }
+    }
+    @keyframes phGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.25); }
+    }
+
+    .build-cta {
+      position: absolute;
+      z-index: 9;
+      left: 50%;
+      bottom: 4%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: clamp(34px, 5vw, 42px);
+      padding: 0 clamp(16px, 3vw, 26px);
+      border-radius: 980px;
+      background: var(--purple);
+      color: #fff;
+      font-size: clamp(0.72rem, 1.6vw, 0.88rem);
+      font-weight: 600;
+      text-decoration: none;
+      direction: rtl;
+      white-space: nowrap;
+      box-shadow: 0 10px 32px rgba(108, 77, 255, 0.5);
+      opacity: 0;
+      transform: translateX(-50%) translateY(14px);
+      pointer-events: none;
+    }
+    .build.is-playing .build-cta {
+      animation: ctaIn 0.5s var(--ease) 4.6s forwards;
+    }
+    .build.is-finished .build-cta,
+    .build.is-alive .build-cta {
+      opacity: 1;
+      transform: translateX(-50%);
+      pointer-events: auto;
+    }
+    @keyframes ctaIn {
+      to { opacity: 1; transform: translateX(-50%); }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding-block: 58px 18px;
+      }
+      .hero .sub { font-size: 0.95rem; }
+      .hero-actions { margin-top: 18px; }
+      .hero-visual-wrap {
+        margin-top: 18px;
+        margin-inline: 0;
+      }
+      .frame-scroll { height: 145vh; }
+      .frame-sticky {
+        height: calc(100svh - var(--nav-h) - 12px);
+      }
+
+      .build {
+        width: min(100%, 92vw);
+        aspect-ratio: 16 / 10;
+        min-height: 0;
+        border-radius: 0;
+      }
+      .live-chrome em { display: none; }
+      .live-nav span { display: none; }
+      .live-chrome, .live-nav { z-index: 1; }
+
+      .live-hero {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1.35fr) auto;
+        height: 66%;
+        min-height: 0;
+        direction: ltr;
+        overflow: visible;
+      }
+      .orb-wrap {
+        min-height: 0;
+        padding: 4% 0;
+      }
+      .orb {
+        width: auto;
+        height: 92%;
+        max-width: 78%;
+        max-height: 220px;
+      }
+      .live-copy {
+        align-items: center;
+        text-align: center;
+        padding: 0 8% 4%;
+        gap: 5px;
+      }
+      .live-copy h3 {
+        font-size: clamp(1.35rem, 7vw, 1.9rem);
+      }
+      .live-copy p { font-size: 0.72rem; }
+      .live-btn { font-size: 0.7rem; padding: 7px 16px; }
+      .live-cards { height: 18%; }
+      .live-card b { font-size: 0.62rem; }
+
+      .build-cta {
+        bottom: 3.5%;
+        min-height: 44px;
+        font-size: 0.9rem;
+        width: calc(100% - 40px);
+        max-width: 320px;
+      }
+      .build-hud { top: 10px; left: 12px; right: 12px; }
+
+      .build.is-alive .cam-rig {
+        animation: camDriftMobile 6.5s ease-in-out infinite;
+      }
+      .build.is-alive .orb {
+        animation: none;
+        opacity: 1;
+        transform: scale(1);
+      }
+      .build.is-alive .core {
+        animation: corePulse 1.6s ease-in-out infinite;
+      }
+      .build.is-alive .live-card:nth-child(1) { animation: floatZ 2.4s ease-in-out infinite; }
+      .build.is-alive .live-card:nth-child(2) { animation: floatZ 2.4s ease-in-out 0.25s infinite; }
+      .build.is-alive .live-card:nth-child(3) { animation: floatZ 2.4s ease-in-out 0.5s infinite; }
+      .build.is-alive .build-glow {
+        animation: glowPulse 2.4s ease-in-out infinite;
+      }
+
+      @keyframes camDriftMobile {
+        0%, 100% { transform: rotateX(calc(4deg + var(--tilt-x))) rotateY(calc(-10deg + var(--tilt-y))) scale(0.96); }
+        50%      { transform: rotateX(calc(7deg + var(--tilt-x))) rotateY(calc(10deg + var(--tilt-y))) scale(1); }
+      }
+      @keyframes floatZ {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-12px) scale(1.08); }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .build .cam-rig,
+      .build .live-site,
+      .build .orb,
+      .build .ring,
+      .build .tilt,
+      .build .core,
+      .build .live-copy small,
+      .build .live-copy h3,
+      .build .live-copy p,
+      .build .live-btn,
+      .build .live-card,
+      .build .build-phone,
+      .build .build-cta,
+      .build .build-glow,
+      .build .build-grid,
+      .build .build-stars i,
+      .build .live-site::after,
+      .build .ph-hero { animation: none !important; }
+      .build .live-site,
+      .build .orb,
+      .build .live-copy small,
+      .build .live-copy h3,
+      .build .live-copy p,
+      .build .live-btn,
+      .build .live-card,
+      .build .build-phone,
+      .build .build-cta { opacity: 1; transform: none; }
+    }
+
+
+    /* ============================================================
+       9. פס נתונים
+       ============================================================ */
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+    }
+    .spec {
+      padding: clamp(26px, 5vw, 44px) 14px;
+      text-align: center;
+    }
+    .spec + .spec { border-inline-start: 1px solid var(--hairline); }
+    .spec b {
+      display: block;
+      font-size: clamp(1.7rem, 6vw, 2.6rem);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .spec span {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(0.78rem, 3vw, 0.92rem);
+      color: var(--text-dim);
+    }
+
+    /* ============================================================
+       10. איך זה עובד
+       ============================================================ */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(24px, 4vw, 46px);
+      margin-top: clamp(46px, 7vw, 76px);
+    }
+    .step { padding-top: 26px; border-top: 1px solid var(--hairline); }
+    .step-n {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--purple);
+      margin-bottom: 14px;
+    }
+    .step h3 {
+      font-size: clamp(1.24rem, 4.4vw, 1.55rem);
+      line-height: 1.2;
+      letter-spacing: -0.028em;
+      margin-bottom: 8px;
+    }
+    .step p { margin: 0; color: var(--text-dim); font-size: 1.02rem; }
+
+    /* ============================================================
+       11. תיק עבודות - מקטע בהיר, הניגוד החתום
+       ============================================================ */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(16px, 2.4vw, 26px);
+      margin-top: clamp(40px, 6vw, 66px);
+    }
+    /* כשיש עבודה אחת בלבד היא נשארת ממורכזת ולא נמתחת לרוחב מופרז */
+    .work-grid:has(> .work:only-child) {
+      grid-template-columns: minmax(0, 420px);
+      justify-content: center;
+    }
+    .work {
+      background: var(--white);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 14px 34px -18px rgba(0, 0, 0, 0.22);
+      transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+    }
+    /* כרטיס שמקשר לאתר אמיתי */
+    a.work {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+    /* placeholder לתמונה - להחלפה ב-<img src="..." alt="..."> */
+    .work-thumb {
+      aspect-ratio: 16 / 11;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      background:
+        radial-gradient(110% 100% at 85% 5%, rgba(108, 77, 255, 0.22), transparent 62%),
+        linear-gradient(180deg, #ECECF1, #E2E2E9);
+      border-bottom: 1px solid var(--hairline-dark);
+    }
+    .work-thumb .bar { background: rgba(29, 29, 31, 0.14); height: 9px; }
+    .work-thumb .bar.xl { height: 16px; width: 60%; background: rgba(29, 29, 31, 0.34); }
+    .work-thumb .bar.sm { width: 34%; }
+    .work-thumb .bar.pill {
+      height: 24px; width: 86px;
+      margin-top: 6px;
+      background: var(--purple);
+      opacity: 0.9;
+    }
+    /* תצוגה מקדימה של אתר אמיתי */
+    .work-thumb--live {
+      padding: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(165deg, #1B4332 0%, #081C15 100%);
+    }
+    .work-thumb--live img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .work-thumb--logo img {
+      width: auto;
+      height: auto;
+      max-width: 62%;
+      max-height: 52%;
+      object-fit: contain;
+    }
+    .work-body {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 20px 22px;
+    }
+    .work-body h3 { font-size: 1.1rem; letter-spacing: -0.025em; color: var(--ink); }
+    .work-body p { margin: 0; font-size: 0.88rem; color: var(--ink-dim); white-space: nowrap; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .work:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 30px 60px -22px rgba(108, 77, 255, 0.42);
+      }
+    }
+
+    .dots { display: none; justify-content: center; gap: 7px; margin-top: 24px; }
+    .dots button {
+      width: 7px; height: 7px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: rgba(29, 29, 31, 0.22);
+      cursor: pointer;
+      transition: width 0.35s var(--ease), background-color 0.35s var(--ease);
+    }
+    .dots button[aria-current="true"] { width: 22px; border-radius: 100px; background: var(--purple); }
+
+    /* ============================================================
+       12. מי אני
+       ============================================================ */
+    .about {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(34px, 6vw, 80px);
+      align-items: center;
+      margin-top: clamp(34px, 5vw, 54px);
+    }
+    .about-sub {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--lime);
+      margin: 14px 0 22px;
+    }
+    .about-text {
+      font-size: clamp(1.02rem, 3.6vw, 1.16rem);
+      line-height: 1.55;
+      color: var(--text-dim);
+      margin: 0;
+      text-wrap: pretty;
+    }
+
+    .portrait {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      background: #12101F;
+      border: 1px solid var(--hairline);
+    }
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 12%;
+    }
+    .portrait::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.38));
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+      padding-top: 28px;
+      border-top: 1px solid var(--hairline);
+    }
+    .facts b {
+      display: block;
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      color: var(--text);
+    }
+    .facts span { font-size: clamp(0.76rem, 3vw, 0.88rem); color: var(--text-dim); }
+
+    /* ============================================================
+       13. טופס דו-שלבי
+       ============================================================ */
+    .form-wrap { position: relative; }
+    /* זוהר סגול רחב מאחורי הכרטיס - מושך את העין בלי צבע שטוח */
+    .form-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -12% -6%;
+      background: radial-gradient(ellipse at 50% 40%, rgba(108, 77, 255, 0.34), transparent 65%);
+      pointer-events: none;
+    }
+
+    .form-card {
+      position: relative;
+      max-width: 680px;
+      margin-inline: auto;
+      background: linear-gradient(180deg, rgba(30, 28, 46, 0.92), rgba(14, 14, 20, 0.94));
+      border: 1px solid var(--hairline-2);
+      border-radius: var(--r-lg);
+      padding: clamp(28px, 5.5vw, 56px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.9);
+      text-align: center;
+    }
+    .form-card .title { font-size: clamp(1.8rem, 6vw, 2.6rem); }
+    .form-card .sub { margin-bottom: 34px; }
+
+    /* פס התקדמות דק */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 260px;
+      margin: 0 auto 26px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 3px;
+      border-radius: 100px;
+      background: rgba(245, 245, 247, 0.15);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: 100px;
+      background: var(--lime);
+      transition: width 0.6s var(--ease);
+    }
+    .progress-text {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    form { text-align: start; }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .field input {
+      width: 100%;
+      min-height: 54px;
+      font-family: inherit;
+      /* 16px בדיוק - מתחת לזה ספארי במובייל מזום על השדה */
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text);
+      background: rgba(245, 245, 247, 0.06);
+      border: 1px solid var(--hairline-2);
+      border-radius: var(--r-sm);
+      padding: 14px 18px;
+      transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+    }
+    .field input::placeholder { color: rgba(245, 245, 247, 0.35); }
+    .field input:focus {
+      border-color: var(--lime);
+      background: rgba(245, 245, 247, 0.09);
+      outline: none;
+    }
+    .field input:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; }
+
+    .error-msg {
+      display: none;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--lime);
+    }
+    .field.has-error input { border-color: var(--lime); }
+    .field.has-error .error-msg { display: block; }
+
+    .question { margin-bottom: 22px; }
+    .q-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      margin: 0 0 10px;
+    }
+    /* בורר מקטעים בסגנון iOS */
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(245, 245, 247, 0.07);
+      border-radius: 100px;
+    }
+    .choice {
+      min-height: 46px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+    }
+    .choice[aria-pressed="true"] { background: var(--purple); color: var(--white); }
+    @media (hover: hover) and (pointer: fine) {
+      .choice:hover { background: rgba(245, 245, 247, 0.1); }
+      .choice[aria-pressed="true"]:hover { background: #7D61FF; }
+    }
+
+    .form-step[hidden] { display: none; }
+    .form-step { animation: stepIn 0.65s var(--ease) both; }
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .form-btn { width: 100%; margin-top: 8px; }
+    .form-legal {
+      margin: 14px 0 0;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .thanks { text-align: center; }
+    .thanks .check {
+      width: 62px; height: 62px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--black);
+      display: grid;
+      place-items: center;
+      font-size: 1.9rem;
+      animation: pop 0.7s var(--ease) both;
+    }
+    @keyframes pop {
+      0%   { transform: scale(0.5); opacity: 0; }
+      60%  { transform: scale(1.06); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .thanks h3 {
+      font-size: clamp(1.5rem, 5.5vw, 2rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .thanks p { margin: 0; color: var(--text-dim); }
+
+    /* ============================================================
+       14. פוטר
+       ============================================================ */
+    footer {
+      background: var(--near-black);
+      border-top: 1px solid var(--hairline);
+      padding-block: clamp(40px, 6vw, 60px) 28px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: clamp(26px, 4vw, 44px);
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .footer-brand {
+      display: block;
+      width: 196px;
+      height: 86px;
+      overflow: hidden;
+      margin: 0 0 12px;
+      text-decoration: none;
+    }
+    .footer-brand img {
+      display: block;
+      width: 196px;
+      height: 196px;
+      object-fit: cover;
+      object-position: center;
+      margin-top: -55px;
+    }
+    .footer-grid p { margin: 0; max-width: 36ch; line-height: 1.5; }
+    .footer-grid h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 10px;
+    }
+    .footer-links { list-style: none; margin: 0; padding: 0; }
+    .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.25s var(--ease);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .footer-links a:hover { color: var(--text); text-decoration: underline; }
+    }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 20px;
+      font-size: 0.76rem;
+    }
+
+    /* ============================================================
+       15. סרגל פעולה תחתון - מובייל
+       ============================================================ */
+    .action-bar {
+      display: none;
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 95;
+      gap: 10px;
+      padding: 10px var(--gutter);
+      padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-top: 1px solid var(--hairline);
+      transform: translateY(130%);
+      transition: transform 0.5s var(--ease);
+    }
+    .action-bar.show { transform: none; }
+    .action-bar .btn { flex: 1; min-height: 48px; font-size: 1rem; }
+    .action-bar .btn-wa { flex: 0 0 48px; padding: 0; font-size: 1.15rem; }
+    @media (max-width: 820px) {
+      .action-bar { display: flex; }
+      body { padding-bottom: 74px; }
+    }
+
+    /* ============================================================
+       16. רספונסיביות
+       ============================================================ */
+    @media (max-width: 940px) {
+      .steps { grid-template-columns: 1fr; gap: 0; }
+      .step { padding-block: 24px; }
+      .work-grid { grid-template-columns: repeat(2, 1fr); }
+      .about { grid-template-columns: 1fr; }
+      .portrait { max-width: 300px; margin-inline: auto; order: -1; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ---------- מובייל ---------- */
+    @media (max-width: 760px) {
+      /* גלריה אופקית עם הצמדה במקום גריד ארוך */
+      .work-grid {
+        display: flex;
+        grid-template-columns: none;
+        gap: 14px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--gutter);
+        margin-inline: calc(var(--gutter) * -1);
+        padding-inline: var(--gutter);
+        padding-bottom: 6px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .work-grid::-webkit-scrollbar { display: none; }
+      .work { flex: 0 0 82%; scroll-snap-align: center; }
+      .dots { display: flex; }
+
+      .hero-actions { flex-direction: column; gap: 6px; }
+      .hero-actions .btn { width: 100%; max-width: 340px; }
+
+      .specs { grid-template-columns: 1fr; }
+      .spec { padding-block: 22px; text-align: start; display: flex; align-items: baseline; gap: 12px; }
+      .spec + .spec { border-inline-start: none; border-top: 1px solid var(--hairline); }
+      .spec b { font-size: 1.6rem; }
+      .spec span { margin-top: 0; }
+
+      .facts { grid-template-columns: 1fr; gap: 14px; }
+      .facts div { display: flex; align-items: baseline; gap: 10px; }
+
+      .footer-grid { grid-template-columns: 1fr; gap: 26px; }
+      .footer-bottom { flex-direction: column; gap: 5px; }
+    }
+
+    @media (max-width: 380px) {
+      .hero .display { font-size: 2.45rem; }
+      .work { flex-basis: 87%; }
+    }
+
+    @media (max-height: 520px) and (orientation: landscape) {
+      .hero { padding-block: 50px; }
+    }
+  </style>
+</head>
+
+<body class="on-dark">
+  <a class="skip-link" href="#hero">דלג לתוכן הראשי</a>
+
+  <!-- ============================================================
+       ניווט
+       ============================================================ -->
+  <nav class="nav" aria-label="ניווט ראשי">
+    <div class="nav-inner">
+      <a class="brand" href="#hero" aria-label="KOVKOV, בניית אתרים">
+        <img src="assets/logo.png" alt="KOVKOV, בניית אתרים">
+      </a>
+      <div class="nav-links">
+        <a href="#how">איך זה עובד</a>
+        <a href="#portfolio">תיק עבודות</a>
+        <a href="#about">מי אני</a>
+      </div>
+      <a class="btn btn-primary nav-cta" href="#lead-form">רוצה דמו</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ============================================================
+         1. HERO
+         ============================================================ -->
+    <section class="hero" id="hero">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> נותרו מקומות לדמו החודש</p>
+
+        <h1 class="display reveal">
+          אתר תדמית לדוגמה לעסק שלך, <span class="accent">חינם</span>
+        </h1>
+
+        <p class="sub reveal">
+          דמו מעוצב במלואו, ללא פונקציונליות.
+          נשאר שלך גם אם לא תזמין את האתר המלא.
+        </p>
+
+        <div class="hero-actions reveal">
+          <a class="btn btn-primary" href="#lead-form">רוצה דמו&nbsp;»</a>
+          <a class="link" href="#portfolio">לתיק העבודות <span class="chev" aria-hidden="true">‹</span></a>
+        </div>
+
+        <!-- חלון האתר בלבד, גדל בגלילה -->
+        <div class="hero-visual-wrap">
+          <div class="frame-scroll" id="frame-scroll">
+            <div class="frame-sticky">
+              <div class="build" id="site-preview" aria-label="חלון אתר תדמית חי">
+                <div class="live-site">
+                  <div class="live-chrome" aria-hidden="true">
+                    <i></i><i></i><i></i>
+                    <em>your-brand.co.il</em>
+                  </div>
+                  <div class="live-nav">
+                    <b>העסק שלך</b>
+                    <span>עבודות</span>
+                    <span>סטודיו</span>
+                    <span>צור קשר</span>
+                  </div>
+                  <div class="live-hero">
+                    <div class="orb-wrap">
+                      <div class="orb">
+                        <span class="tilt t1"><i class="ring"></i></span>
+                        <span class="tilt t2"><i class="ring"></i></span>
+                        <span class="tilt t3"><i class="ring"></i></span>
+                        <span class="core"></span>
+                      </div>
+                    </div>
+                    <div class="live-copy">
+                      <small>אתר תדמית בתלת מימד</small>
+                      <h3>מותג<br>שנראה חי</h3>
+                      <p>דמו מלא, מוכן תוך 48 שעות</p>
+                      <span class="live-btn">קבעו שיחה</span>
+                    </div>
+                  </div>
+                  <div class="live-cards">
+                    <article class="live-card"><i></i><b>מיתוג</b></article>
+                    <article class="live-card"><i></i><b>חוויה</b></article>
+                    <article class="live-card"><i></i><b>המרה</b></article>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- פס נתונים -->
+    <div class="container">
+      <div class="specs reveal">
+        <div class="spec"><b>0&#8362;</b><span>עלות הדמו</span></div>
+        <div class="spec"><b>48ש'</b><span>עד קבלת הדמו</span></div>
+        <div class="spec"><b>100%</b><span>מותאם למובייל</span></div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         2. איך זה עובד
+         ============================================================ -->
+    <section class="section-pad" id="how">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> התהליך</p>
+        <h2 class="title reveal">שלושה צעדים. בלי כאב ראש.</h2>
+        <p class="sub reveal">אתם משאירים פרטים, אני עושה את כל השאר.</p>
+
+        <div class="steps">
+          <article class="step reveal">
+            <span class="step-n">01</span>
+            <h3>משאירים שם וטלפון</h3>
+            <p>טופס קצר של שני שדות. לוקח פחות מ-30 שניות.</p>
+          </article>
+
+          <article class="step reveal">
+            <span class="step-n">02</span>
+            <h3>מקבלים דמו מותאם</h3>
+            <p>אני בונה דף מעוצב במלואו, בהתאמה לתחום ולסגנון של העסק שלכם.</p>
+          </article>
+
+          <article class="step reveal">
+            <span class="step-n">03</span>
+            <h3>אהבתם? בונים את האתר המלא</h3>
+            <p>אם הדמו מדבר אליכם, נמשיך לאתר מלא ופעיל. ואם לא, הדמו נשאר שלכם.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. תיק עבודות - מקטע בהיר
+         ============================================================ -->
+    <section class="section-pad section-light" id="portfolio">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> תיק עבודות</p>
+        <h2 class="title reveal">עבודה אמיתית שכבר באוויר</h2>
+        <p class="sub reveal">פרויקט אמיתי שתוכנן, עוצב ונבנה עד לפרטים הקטנים.</p>
+
+        <!-- במובייל הגריד הופך לגלריה אופקית עם הצמדה -->
+        <div class="work-grid" id="work-grid">
+
+          <!-- אתר אמיתי: פסגת הנופש -->
+          <a class="work reveal" href="https://pisgathanofesh.com/" target="_blank" rel="noopener"
+             aria-label="פסגת הנופש, נופש ואירוח, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--logo">
+              <img src="https://pisgathanofesh.com/assets/logo-main-DA1ofO9a.png"
+                   alt="תצוגה מקדימה של אתר פסגת הנופש" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>פסגת הנופש</h3>
+              <p>נופש ואירוח</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="dots" id="dots" aria-label="ניווט בין העבודות"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. מי אני
+         ============================================================ -->
+    <section class="section-pad" id="about">
+      <div class="container">
+        <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> מי אני</p>
+
+        <div class="about">
+          <div class="reveal">
+            <h2 class="title">הטכנולוגיה של מחר, בשירות העסק שלך היום</h2>
+            <p class="about-sub">האדם שמאחורי האתר שלך</p>
+            <p class="about-text">
+              שמי יעקב, ובשנתיים וחצי האחרונות התמחיתי בבינה מלאכותית, התחום שמשנה כרגע את כל
+              חוקי המשחק בעולם הדיגיטל. מה שמשך אותי לכאן זה השילוב שאני הכי אוהב: לשבת מול
+              המחשב, לבנות, ולראות תוצאה חיה על המסך במהירות, ולעשות את זה תוך כדי עזרה אמיתית
+              לאנשים ולעסקים שלהם. את הכלים המתקדמים האלה אני מנצל כדי לבנות לך אתר מהר יותר,
+              חכם יותר, ובעלות נמוכה יותר. כשאתה עובד איתי, אתה מקבל לא רק טכנולוגיה בחזית,
+              אלא גם מישהו שבאמת אכפת לו מהתוצאה שלך.
+            </p>
+
+            <div class="facts">
+              <div><b>2.5</b><span>שנים בעולם ה-AI</span></div>
+              <div><b>100%</b><span>התאמה למובייל</span></div>
+              <div><b>24ש'</b><span>זמן תגובה ממוצע</span></div>
+            </div>
+          </div>
+
+          <div class="portrait reveal">
+            <img src="assets/yakov.png" alt="יעקב, בונה אתרי תדמית">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. טופס דו-שלבי
+         ============================================================ -->
+    <section class="section-pad section-dim" id="lead-form">
+      <div class="container form-wrap">
+        <div class="form-card reveal">
+
+          <div class="progress" aria-hidden="true">
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+            <span class="progress-text" id="progress-text">שלב 1 מתוך 2</span>
+          </div>
+
+          <h2 class="title">קבלו דמו לאתר שלכם</h2>
+          <p class="sub">שני שדות קצרים, ואני חוזר אליכם עם דמו מותאם לעסק.</p>
+
+          <!-- הכרזות לקוראי מסך על מעברי שלבים -->
+          <p class="sr-only" role="status" aria-live="polite" id="form-status"></p>
+
+          <form id="lead-form-el" novalidate>
+
+            <!-- ---------- שלב 1 ---------- -->
+            <div class="form-step" id="step-1">
+              <div class="field" id="field-name">
+                <label for="name">שם מלא</label>
+                <input type="text" id="name" name="name" placeholder="ישראל ישראלי"
+                       autocomplete="name" enterkeyhint="next"
+                       aria-describedby="name-error" required>
+                <span class="error-msg" id="name-error">נא למלא שם מלא</span>
+              </div>
+
+              <div class="field" id="field-phone">
+                <label for="phone">מספר טלפון</label>
+                <input type="tel" id="phone" name="phone" placeholder="050-0000000"
+                       autocomplete="tel" inputmode="tel" enterkeyhint="done"
+                       aria-describedby="phone-error" required>
+                <span class="error-msg" id="phone-error">נא למלא מספר טלפון תקין</span>
+              </div>
+
+              <button type="button" class="btn btn-primary form-btn" id="btn-next">המשך&nbsp;»</button>
+            </div>
+
+            <!-- ---------- שלב 2 ---------- -->
+            <div class="form-step" id="step-2" hidden>
+              <div class="question">
+                <p class="q-title" id="q-business">בעל/ת עסק?</p>
+                <div class="choices" role="group" aria-labelledby="q-business">
+                  <button type="button" class="choice" data-group="business" data-value="כן" aria-pressed="false">כן</button>
+                  <button type="button" class="choice" data-group="business" data-value="לא" aria-pressed="false">לא</button>
+                </div>
+              </div>
+
+              <div class="question">
+                <p class="q-title" id="q-age">מעל גיל 16?</p>
+                <div class="choices" role="group" aria-labelledby="q-age">
+                  <button type="button" class="choice" data-group="age" data-value="כן" aria-pressed="false">כן</button>
+                  <button type="button" class="choice" data-group="age" data-value="לא" aria-pressed="false">לא</button>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary form-btn" id="btn-submit">שליחה</button>
+              <p class="form-legal">בלחיצה על שליחה תיפתח שיחת וואטסאפ עם הפרטים שמילאתם.</p>
+            </div>
+
+            <!-- ---------- תודה ---------- -->
+            <div class="form-step thanks" id="step-thanks" hidden>
+              <div class="check" aria-hidden="true">✓</div>
+              <h3>תודה, נחזור אליך בקרוב</h3>
+              <p>הפרטים התקבלו. אם חלון הוואטסאפ לא נפתח, אפשר לפנות אליי ישירות בקישור שבפוטר.</p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       6. פוטר
+       ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="footer-brand" href="#hero" aria-label="KOVKOV, בניית אתרים">
+            <img src="assets/logo.png" alt="KOVKOV, בניית אתרים">
+          </a>
+          <p>בונה אתרי תדמית מהירים, מעוצבים ומותאמים למובייל, בעזרת כלי בינה מלאכותית מתקדמים.</p>
+        </div>
+
+        <div>
+          <h4>יצירת קשר</h4>
+          <ul class="footer-links">
+            <li><a href="https://wa.me/972506104948" target="_blank" rel="noopener">וואטסאפ: 050-6104948</a></li>
+            <li><a href="tel:+972506104948">חיוג: 050-6104948</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>ניווט</h4>
+          <ul class="footer-links">
+            <li><a href="#how">איך זה עובד</a></li>
+            <li><a href="#portfolio">תיק עבודות</a></li>
+            <li><a href="#about">מי אני</a></li>
+            <li><a href="#lead-form">קבלת דמו</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> כל הזכויות שמורות. הדמו ניתן ללא עלות וללא התחייבות.</span>
+        <span>התמונות בתיק העבודות הן להמחשה בלבד.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- סרגל פעולה תחתון - מובייל -->
+  <div class="action-bar" id="action-bar">
+    <a class="btn btn-primary" href="#lead-form">רוצה דמו&nbsp;»</a>
+    <a class="btn btn-quiet btn-wa" href="https://wa.me/972506104948" target="_blank" rel="noopener"
+       aria-label="פתיחת שיחת וואטסאפ"><span aria-hidden="true">✆</span></a>
+  </div>
+
+  <script>
+    /* ============================================================
+       1. חשיפה בגלילה
+       ============================================================ */
+    (function initReveal() {
+      const items = Array.from(document.querySelectorAll('.reveal'));
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+
+      // השהיה מדורגת לפי מיקום בין האחים - יוצר כניסה מדורגת ורכה
+      items.forEach(el => {
+        const sibs = Array.from(el.parentElement.children).filter(c => c.classList.contains('reveal'));
+        el.dataset.delay = Math.min(sibs.indexOf(el), 5) * 90;
+      });
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.style.transitionDelay = entry.target.dataset.delay + 'ms';
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+      items.forEach(el => io.observe(el));
+    })();
+
+    /* ============================================================
+       2. אתר חי + גדילה בגלילה
+       ============================================================ */
+    (function initSiteBuild() {
+      const stage = document.getElementById('site-preview');
+      if (!stage) return;
+
+      function finishBuild() {
+        stage.classList.add('is-finished', 'is-alive');
+      }
+
+      function playOnce() {
+        if (stage.classList.contains('is-playing')) return;
+        stage.classList.add('is-playing');
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          finishBuild();
+          return;
+        }
+
+        setTimeout(finishBuild, 1600);
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          playOnce();
+          observer.disconnect();
+        }, { threshold: 0.08 });
+        observer.observe(stage);
+      } else {
+        playOnce();
+      }
+    })();
+
+    (function initFrameScale() {
+      const track = document.getElementById('frame-scroll');
+      const frame = document.getElementById('site-preview');
+      if (!track || !frame) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        frame.style.setProperty('--frame-scale', '1');
+        return;
+      }
+
+      function update() {
+        const rect = track.getBoundingClientRect();
+        const range = Math.max(1, rect.height - window.innerHeight);
+        const progress = Math.min(1, Math.max(0, -rect.top / range));
+        const eased = 1 - Math.pow(1 - progress, 1.65);
+        const scale = 0.54 + eased * 0.46;
+        frame.style.setProperty('--frame-scale', scale.toFixed(4));
+      }
+
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+    })();
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          playOnce();
+          observer.disconnect();
+        }, { threshold: 0.08 });
+        observer.observe(stage);
+      } else {
+        playOnce();
+      }
+    })();
+
+    /* ============================================================
+       3. סרגל פעולה תחתון במובייל
+       מופיע אחרי ההירו, נעלם כשהטופס על המסך
+       ============================================================ */
+    (function initActionBar() {
+      const bar  = document.getElementById('action-bar');
+      const hero = document.getElementById('hero');
+      const form = document.getElementById('lead-form');
+      if (!('IntersectionObserver' in window)) return;
+
+      let heroOut = false, formIn = false;
+      const update = () => bar.classList.toggle('show', heroOut && !formIn);
+
+      new IntersectionObserver(([e]) => { heroOut = !e.isIntersecting; update(); },
+        { threshold: 0 }).observe(hero);
+      new IntersectionObserver(([e]) => { formIn = e.isIntersecting; update(); },
+        { threshold: 0.25 }).observe(form);
+    })();
+
+    /* ============================================================
+       4. נקודות ניווט לגלריית תיק העבודות
+       ============================================================ */
+    (function initGalleryDots() {
+      const track = document.getElementById('work-grid');
+      const dots  = document.getElementById('dots');
+      const cards = Array.from(track.children);
+
+      /* אין צורך בניווט קרוסלה כשמוצגת עבודה אחת בלבד */
+      if (cards.length <= 1) dots.hidden = true;
+
+      cards.forEach((card, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', 'מעבר לעבודה ' + (i + 1));
+        dot.setAttribute('aria-current', i === 0 ? 'true' : 'false');
+        dot.addEventListener('click', () => {
+          card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        });
+        dots.appendChild(dot);
+      });
+
+      const dotEls = Array.from(dots.children);
+      let ticking = false;
+
+      track.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          // מדידה מול מלבן התצוגה ולא מול scrollLeft - ב-RTL הערך
+          // מתנהג אחרת בין דפדפנים ועלול להיות שלילי
+          const trackRect = track.getBoundingClientRect();
+          const center = trackRect.left + trackRect.width / 2;
+          let closest = 0, min = Infinity;
+          cards.forEach((card, i) => {
+            const r = card.getBoundingClientRect();
+            const dist = Math.abs((r.left + r.width / 2) - center);
+            if (dist < min) { min = dist; closest = i; }
+          });
+          dotEls.forEach((d, i) => d.setAttribute('aria-current', i === closest ? 'true' : 'false'));
+          ticking = false;
+        });
+      }, { passive: true });
+    })();
+
+    /* ============================================================
+       5. הטופס הדו-שלבי
+       ============================================================ */
+    (function initLeadForm() {
+      const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx4qgJOLmqBD0B_VrNo62uyxSHazHfwUvDlJpMuXQuGGDL2vHYTtQYFo7UhajSH9tNa/exec';
+      const WHATSAPP_NUMBER   = '972506104948';
+
+      const form         = document.getElementById('lead-form-el');
+      const step1        = document.getElementById('step-1');
+      const step2        = document.getElementById('step-2');
+      const stepThanks   = document.getElementById('step-thanks');
+      const btnNext      = document.getElementById('btn-next');
+      const nameInput    = document.getElementById('name');
+      const phoneInput   = document.getElementById('phone');
+      const status       = document.getElementById('form-status');
+      const progressFill = document.getElementById('progress-fill');
+      const progressText = document.getElementById('progress-text');
+
+      const answers = { business: '', age: '' };
+
+      function markField(input, wrapperId, isValid) {
+        document.getElementById(wrapperId).classList.toggle('has-error', !isValid);
+        input.setAttribute('aria-invalid', String(!isValid));
+        return isValid;
+      }
+
+      function isPhoneValid(value) {
+        // לפחות 9 ספרות אחרי הסרת רווחים, מקפים וסוגריים
+        return value.replace(/[^\d]/g, '').length >= 9;
+      }
+
+      function goToStep2() {
+        const nameOk  = markField(nameInput,  'field-name',  nameInput.value.trim().length >= 2);
+        const phoneOk = markField(phoneInput, 'field-phone', isPhoneValid(phoneInput.value));
+
+        if (!nameOk || !phoneOk) {
+          (!nameOk ? nameInput : phoneInput).focus();
+          status.textContent = 'יש להשלים את השדות החסרים';
+          return;
+        }
+
+        step1.hidden = true;
+        step2.hidden = false;
+        progressFill.style.width = '100%';
+        progressText.textContent = 'שלב 2 מתוך 2';
+        status.textContent = 'עברת לשלב 2: שתי שאלות קצרות';
+        step2.querySelector('.choice').focus();
+      }
+
+      btnNext.addEventListener('click', goToStep2);
+
+      [nameInput, phoneInput].forEach(input => {
+        input.addEventListener('input', () => {
+          input.closest('.field').classList.remove('has-error');
+          input.removeAttribute('aria-invalid');
+        });
+      });
+
+      document.querySelectorAll('.choice').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const group = this.dataset.group;
+          document.querySelectorAll('.choice[data-group="' + group + '"]')
+            .forEach(b => b.setAttribute('aria-pressed', 'false'));
+          this.setAttribute('aria-pressed', 'true');
+          answers[group] = this.dataset.value;
+        });
+      });
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Enter בשדות שלב 1 שולח את הטופס - מפנים את זה למעבר שלב
+        if (!step1.hidden) { goToStep2(); return; }
+
+        const payload = {
+          name:     nameInput.value.trim(),
+          phone:    phoneInput.value.trim(),
+          business: answers.business,
+          age:      answers.age
+        };
+
+        // א. שליחה ברקע לגוגל שיטס - fire and forget, לא חוסמת את ההמשך
+        try {
+          fetch(GOOGLE_SHEETS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          }).catch(function () { /* מתעלמים מכשלי רשת בכוונה */ });
+        } catch (e) { /* מתעלמים בכוונה */ }
+
+        // ב. בניית הודעת וואטסאפ ופתיחתה
+        const message =
+          'שלום, אשמח לקבל דמו לאתר.\n' +
+          'שם: '    + payload.name  + '\n' +
+          'טלפון: ' + payload.phone + '\n' +
+          'בעל/ת עסק: '  + (payload.business || 'לא צוין') + '\n' +
+          'מעל גיל 16: ' + (payload.age || 'לא צוין');
+
+        window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message),
+                    '_blank', 'noopener');
+
+        // ג. מסך תודה
+        step2.hidden = true;
+        stepThanks.hidden = false;
+        document.querySelector('.progress').style.display = 'none';
+        status.textContent = 'הפרטים נשלחו. תודה, נחזור אליך בקרוב';
+      });
+    })();
+
+    /* ============================================================
+       6. שנה נוכחית בפוטר
+       ============================================================ */
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
