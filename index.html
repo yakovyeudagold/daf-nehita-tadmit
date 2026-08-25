@@ -265,7 +265,7 @@
     /* ============================================================
        6. חשיפה בגלילה - עדינה וארוכה
        ============================================================ */
-    .reveal {
+    .reveal.is-pending {
       opacity: 0;
       transform: translateY(28px);
       transition: opacity 1s var(--ease), transform 1s var(--ease);
@@ -1957,6 +1957,7 @@
        ============================================================ */
     (function initReveal() {
       const items = Array.from(document.querySelectorAll('.reveal'));
+      items.forEach(el => el.classList.add('is-pending'));
 
       if (!('IntersectionObserver' in window)) {
         items.forEach(el => el.classList.add('is-visible'));
@@ -2038,18 +2039,6 @@
       update();
       window.addEventListener('scroll', update, { passive: true });
       window.addEventListener('resize', update);
-    })();
-
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(function (entries) {
-          if (!entries[0].isIntersecting) return;
-          playOnce();
-          observer.disconnect();
-        }, { threshold: 0.08 });
-        observer.observe(stage);
-      } else {
-        playOnce();
-      }
     })();
 
     /* ============================================================
