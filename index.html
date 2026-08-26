@@ -388,7 +388,7 @@
 
     .build {
       --ease-snap: cubic-bezier(0.22, 1.35, 0.36, 1);
-      --frame-scale: 0.56;
+      --frame-scale: 0.82;
       position: relative;
       width: min(920px, 94vw);
       aspect-ratio: 16 / 10;
@@ -572,7 +572,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      z-index: 5;
+      z-index: 2;
       pointer-events: none;
       background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.14) 50%, transparent 58%);
       transform: translateX(-130%);
@@ -586,6 +586,8 @@
     }
 
     .live-chrome {
+      position: relative;
+      z-index: 4;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -613,6 +615,8 @@
     }
 
     .live-nav {
+      position: relative;
+      z-index: 4;
       display: flex;
       align-items: center;
       gap: clamp(8px, 1.6vw, 16px);
@@ -635,27 +639,29 @@
 
     .live-hero {
       display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
+      grid-template-columns: 1.2fr 0.8fr;
       direction: rtl;
       height: 52%;
       min-height: 0;
       padding: 2% 3%;
-      overflow: visible;
+      overflow: hidden;
       transform-style: preserve-3d;
       background:
-        radial-gradient(ellipse at 70% 40%, rgba(108, 77, 255, 0.28), transparent 55%),
+        radial-gradient(ellipse at 30% 40%, rgba(108, 77, 255, 0.28), transparent 55%),
         linear-gradient(180deg, #101018 0%, #0b0b12 100%);
     }
 
     .orb-wrap {
       position: relative;
+      z-index: 1;
       display: grid;
       place-items: center;
       min-height: 0;
       height: 100%;
-      overflow: visible;
+      overflow: hidden;
       perspective: 700px;
       transform-style: preserve-3d;
+      pointer-events: none;
     }
     .orb {
       position: relative;
@@ -664,8 +670,8 @@
       aspect-ratio: 1;
       transform-style: preserve-3d;
       overflow: visible;
-      opacity: 0;
-      transform: scale(0.2);
+      opacity: 1;
+      transform: scale(1);
     }
     .build.is-playing .orb {
       animation: orbIn 0.8s var(--ease-snap) 1.15s forwards;
@@ -740,55 +746,52 @@
     }
 
     .live-copy {
+      position: relative;
+      z-index: 4;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
       gap: 6px;
-      padding: 4% 2% 4% 6%;
+      padding: 4% 6% 4% 4%;
       text-align: right;
       transform: translateZ(48px);
     }
     .live-copy small {
-      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      font-size: clamp(0.58rem, 1.2vw, 0.72rem);
       font-weight: 600;
       letter-spacing: 0.08em;
       color: var(--lime);
-      opacity: 0;
     }
     .live-copy h3 {
       margin: 0;
-      font-size: clamp(1.15rem, 3.2vw, 1.85rem);
+      font-size: clamp(1.35rem, 3.4vw, 2rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.05;
       color: #fff;
-      opacity: 0;
-      transform: translateY(16px);
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
     }
     .live-copy p {
       margin: 0;
-      font-size: clamp(0.48rem, 1.2vw, 0.7rem);
-      color: rgba(255, 255, 255, 0.55);
-      opacity: 0;
+      font-size: clamp(0.68rem, 1.3vw, 0.86rem);
+      color: rgba(255, 255, 255, 0.72);
     }
     .live-btn {
       display: inline-flex;
       margin-top: 4px;
-      padding: 5px 12px;
+      padding: 8px 16px;
       border-radius: 100px;
       background: var(--purple);
       color: #fff;
-      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
+      font-size: clamp(0.62rem, 1.2vw, 0.78rem);
       font-weight: 600;
       box-shadow: 0 8px 20px rgba(108, 77, 255, 0.45);
-      opacity: 0;
-      transform: scale(0.7);
     }
-    .build.is-playing .live-copy small { animation: fadeUp 0.45s var(--ease) 1.7s forwards; }
-    .build.is-playing .live-copy h3    { animation: fadeUp 0.5s var(--ease) 1.9s forwards; }
-    .build.is-playing .live-copy p     { animation: fadeUp 0.45s var(--ease) 2.1s forwards; }
-    .build.is-playing .live-btn        { animation: popIn 0.4s var(--ease-snap) 2.3s forwards; }
+    .build.is-playing .live-copy small { animation: fadeUp 0.45s var(--ease) 0.2s both; }
+    .build.is-playing .live-copy h3    { animation: fadeUp 0.5s var(--ease) 0.32s both; }
+    .build.is-playing .live-copy p     { animation: fadeUp 0.45s var(--ease) 0.44s both; }
+    .build.is-playing .live-btn        { animation: popIn 0.4s var(--ease-snap) 0.55s both; }
     .build.is-alive .live-copy small,
     .build.is-alive .live-copy h3,
     .build.is-alive .live-copy p,
@@ -801,13 +804,17 @@
       transform: none;
     }
     @keyframes fadeUp {
+      from { opacity: 0.35; transform: translateY(10px); }
       to { opacity: 1; transform: none; }
     }
     @keyframes popIn {
+      from { opacity: 0.5; transform: scale(0.92); }
       to { opacity: 1; transform: scale(1); }
     }
 
     .live-cards {
+      position: relative;
+      z-index: 4;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 2.5%;
@@ -820,8 +827,8 @@
       overflow: hidden;
       border-radius: 8px;
       background: #16161f;
-      opacity: 0;
-      transform: translateZ(-180px) translateY(30px) scale(0.8);
+      opacity: 1;
+      transform: none;
     }
     .live-card i {
       display: block;
@@ -983,7 +990,7 @@
       to { opacity: 1; transform: translateX(-50%); }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 820px) {
       .hero {
         padding-block: 58px 18px;
       }
@@ -993,52 +1000,70 @@
         margin-top: 18px;
         margin-inline: 0;
       }
-      .frame-scroll { height: 145vh; }
+      .frame-scroll { height: auto; }
       .frame-sticky {
-        height: calc(100svh - var(--nav-h) - 12px);
+        position: relative;
+        top: auto;
+        height: auto;
+        padding-block: 4px 12px;
       }
 
       .build {
-        width: min(100%, 92vw);
-        aspect-ratio: 16 / 10;
+        --frame-scale: 1;
+        width: min(100%, 360px);
+        aspect-ratio: 9 / 16;
         min-height: 0;
-        border-radius: 0;
+        transform: none;
       }
-      .live-chrome em { display: none; }
-      .live-nav span { display: none; }
-      .live-chrome, .live-nav { z-index: 1; }
+      .live-site { border-radius: 26px; }
+      .live-chrome em { display: block; font-size: 0.62rem; }
+      .live-nav span { display: inline; font-size: 0.62rem; }
+      .live-nav b { font-size: 0.92rem; }
+      .live-chrome, .live-nav, .live-cards { z-index: 4; position: relative; }
 
       .live-hero {
+        display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1.35fr) auto;
-        height: 66%;
+        grid-template-areas: "stage";
+        height: 62%;
         min-height: 0;
-        direction: ltr;
-        overflow: visible;
+        direction: rtl;
+        overflow: hidden;
+        padding: 0;
       }
+      .orb-wrap,
+      .live-copy { grid-area: stage; }
       .orb-wrap {
+        z-index: 1;
         min-height: 0;
-        padding: 4% 0;
+        padding: 8% 0 28%;
+        overflow: hidden;
       }
       .orb {
-        width: auto;
-        height: 92%;
+        width: min(70%, 210px);
+        height: auto;
         max-width: 78%;
-        max-height: 220px;
+        max-height: none;
       }
       .live-copy {
+        z-index: 4;
         align-items: center;
         text-align: center;
-        padding: 0 8% 4%;
-        gap: 5px;
+        justify-content: flex-end;
+        padding: 0 18px 18px;
+        gap: 8px;
+        background: linear-gradient(180deg, transparent 12%, rgba(8, 8, 14, 0.55) 48%, rgba(8, 8, 14, 0.94) 82%);
+        transform: none;
       }
+      .live-copy small { font-size: 0.78rem; }
       .live-copy h3 {
-        font-size: clamp(1.35rem, 7vw, 1.9rem);
+        font-size: clamp(1.7rem, 8vw, 2.15rem);
+        text-shadow: 0 4px 22px rgba(0, 0, 0, 0.75);
       }
-      .live-copy p { font-size: 0.72rem; }
-      .live-btn { font-size: 0.7rem; padding: 7px 16px; }
-      .live-cards { height: 18%; }
-      .live-card b { font-size: 0.62rem; }
+      .live-copy p { font-size: 0.92rem; color: rgba(255, 255, 255, 0.82); }
+      .live-btn { font-size: 0.85rem; padding: 10px 22px; }
+      .live-cards { height: 16%; }
+      .live-card b { font-size: 0.72rem; }
 
       .build-cta {
         bottom: 3.5%;
@@ -1049,9 +1074,7 @@
       }
       .build-hud { top: 10px; left: 12px; right: 12px; }
 
-      .build.is-alive .cam-rig {
-        animation: camDriftMobile 6.5s ease-in-out infinite;
-      }
+      .build.is-alive .cam-rig { animation: none; }
       .build.is-alive .orb {
         animation: none;
         opacity: 1;
@@ -1060,20 +1083,10 @@
       .build.is-alive .core {
         animation: corePulse 1.6s ease-in-out infinite;
       }
-      .build.is-alive .live-card:nth-child(1) { animation: floatZ 2.4s ease-in-out infinite; }
-      .build.is-alive .live-card:nth-child(2) { animation: floatZ 2.4s ease-in-out 0.25s infinite; }
-      .build.is-alive .live-card:nth-child(3) { animation: floatZ 2.4s ease-in-out 0.5s infinite; }
-      .build.is-alive .build-glow {
-        animation: glowPulse 2.4s ease-in-out infinite;
-      }
-
-      @keyframes camDriftMobile {
-        0%, 100% { transform: rotateX(calc(4deg + var(--tilt-x))) rotateY(calc(-10deg + var(--tilt-y))) scale(0.96); }
-        50%      { transform: rotateX(calc(7deg + var(--tilt-x))) rotateY(calc(10deg + var(--tilt-y))) scale(1); }
-      }
-      @keyframes floatZ {
-        0%, 100% { transform: translateY(0) scale(1); }
-        50% { transform: translateY(-12px) scale(1.08); }
+      .build.is-alive .live-card:nth-child(1),
+      .build.is-alive .live-card:nth-child(2),
+      .build.is-alive .live-card:nth-child(3) {
+        animation: none;
       }
     }
 
@@ -1782,19 +1795,19 @@
                     <span>צור קשר</span>
                   </div>
                   <div class="live-hero">
-                    <div class="orb-wrap">
+                    <div class="live-copy">
+                      <small>אתר תדמית בתלת מימד</small>
+                      <h3>מותג<br>שנראה חי</h3>
+                      <p>דמו מלא, מוכן תוך 48 שעות</p>
+                      <span class="live-btn">קבעו שיחה</span>
+                    </div>
+                    <div class="orb-wrap" aria-hidden="true">
                       <div class="orb">
                         <span class="tilt t1"><i class="ring"></i></span>
                         <span class="tilt t2"><i class="ring"></i></span>
                         <span class="tilt t3"><i class="ring"></i></span>
                         <span class="core"></span>
                       </div>
-                    </div>
-                    <div class="live-copy">
-                      <small>אתר תדמית בתלת מימד</small>
-                      <h3>מותג<br>שנראה חי</h3>
-                      <p>דמו מלא, מוכן תוך 48 שעות</p>
-                      <span class="live-btn">קבעו שיחה</span>
                     </div>
                   </div>
                   <div class="live-cards">
@@ -2122,11 +2135,15 @@
       }
 
       function update() {
+        if (window.matchMedia('(max-width: 820px)').matches) {
+          frame.style.setProperty('--frame-scale', '1');
+          return;
+        }
         const rect = track.getBoundingClientRect();
         const range = Math.max(1, rect.height - window.innerHeight);
         const progress = Math.min(1, Math.max(0, -rect.top / range));
         const eased = 1 - Math.pow(1 - progress, 1.65);
-        const scale = 0.54 + eased * 0.46;
+        const scale = 0.82 + eased * 0.18;
         frame.style.setProperty('--frame-scale', scale.toFixed(4));
       }
 
