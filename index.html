@@ -342,7 +342,7 @@
        ============================================================ */
     .hero {
       text-align: center;
-      padding-block: clamp(70px, 13vw, 130px) clamp(60px, 10vw, 100px);
+      padding-block: clamp(44px, 8vw, 80px) clamp(34px, 5vw, 56px);
       overflow: visible;
     }
 
@@ -360,8 +360,17 @@
     }
     .hero .container { position: relative; z-index: 1; }
 
-    .hero .display { margin-inline: auto; max-width: 16ch; }
-    .hero .sub { margin-inline: auto; max-width: 44ch; }
+    .hero .display {
+      margin-inline: auto;
+      max-width: 18ch;
+      font-size: clamp(2rem, 5.6vw, 3.5rem);
+    }
+    .hero .sub {
+      margin-inline: auto;
+      max-width: 36ch;
+      margin-top: 12px;
+      font-size: clamp(0.98rem, 2.4vw, 1.12rem);
+    }
 
     .hero-actions {
       display: flex;
@@ -369,11 +378,11 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 10px 26px;
-      margin-top: 34px;
+      margin-top: 22px;
     }
 
     .hero-visual-wrap {
-      margin-top: clamp(28px, 5vw, 56px);
+      margin-top: clamp(20px, 3vw, 34px);
     }
 
     .frame-scroll {
@@ -391,7 +400,7 @@
       --ease-snap: cubic-bezier(0.22, 1.35, 0.36, 1);
       --frame-scale: 1;
       position: relative;
-      width: min(920px, 94vw);
+      width: min(620px, 88vw);
       aspect-ratio: 16 / 10;
       margin-inline: auto;
       overflow: visible;
@@ -761,7 +770,7 @@
       background: linear-gradient(180deg, rgba(7, 7, 12, 0.08) 0%, rgba(7, 7, 12, 0.55) 62%, rgba(7, 7, 12, 0.88) 100%);
     }
     .live-copy small {
-      font-size: clamp(0.72rem, 1.6vw, 0.92rem);
+      font-size: clamp(0.62rem, 1.1vw, 0.76rem);
       font-weight: 700;
       letter-spacing: 0.08em;
       color: var(--lime);
@@ -769,7 +778,7 @@
     }
     .live-copy h3 {
       margin: 0;
-      font-size: clamp(2rem, 5.2vw, 3.1rem);
+      font-size: clamp(1.5rem, 3.4vw, 2.1rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.05;
@@ -779,14 +788,14 @@
     .live-copy p {
       margin: 0;
       max-width: 28ch;
-      font-size: clamp(0.88rem, 1.8vw, 1.05rem);
+      font-size: clamp(0.74rem, 1.3vw, 0.88rem);
       color: rgba(255, 255, 255, 0.86);
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
     }
     .live-btn {
       display: inline-flex;
-      margin-top: 8px;
-      padding: 11px 22px;
+      margin-top: 6px;
+      padding: 8px 18px;
       border-radius: 100px;
       background: var(--purple);
       color: #fff;
@@ -979,12 +988,13 @@
 
     @media (max-width: 820px) {
       .hero {
-        padding-block: 58px 18px;
+        padding-block: 40px 16px;
       }
-      .hero .sub { font-size: 0.95rem; }
-      .hero-actions { margin-top: 18px; }
+      .hero .display { font-size: clamp(1.85rem, 8vw, 2.4rem); }
+      .hero .sub { font-size: 0.92rem; margin-top: 10px; }
+      .hero-actions { margin-top: 16px; }
       .hero-visual-wrap {
-        margin-top: 18px;
+        margin-top: 16px;
         margin-inline: 0;
       }
       .frame-scroll { height: auto; }
@@ -997,39 +1007,39 @@
 
       .build {
         --frame-scale: 1;
-        width: min(100%, 360px);
-        aspect-ratio: 9 / 16;
+        width: min(88%, 300px);
+        aspect-ratio: 3 / 4;
         min-height: 0;
         transform: none;
       }
-      .live-site { border-radius: 26px; }
-      .live-chrome em { display: block; font-size: 0.62rem; }
-      .live-nav span { display: inline; font-size: 0.62rem; }
-      .live-nav b { font-size: 0.92rem; }
+      .live-site { border-radius: 22px; }
+      .live-chrome em { display: block; font-size: 0.56rem; }
+      .live-nav span { display: inline; font-size: 0.56rem; }
+      .live-nav b { font-size: 0.8rem; }
       .live-chrome, .live-nav { z-index: 4; position: relative; }
 
-      .live-hero { height: 77%; }
+      .live-hero { height: 74%; }
       .orb {
-        width: min(78%, 240px);
-        max-height: 52%;
+        width: min(66%, 180px);
+        max-height: 50%;
       }
       .live-copy {
-        padding: 8% 16px 22%;
-        gap: 8px;
+        padding: 8% 14px 24%;
+        gap: 6px;
       }
-      .live-copy small { font-size: 0.78rem; }
+      .live-copy small { font-size: 0.64rem; }
       .live-copy h3 {
-        font-size: clamp(1.85rem, 9vw, 2.35rem);
+        font-size: clamp(1.4rem, 6.5vw, 1.8rem);
       }
-      .live-copy p { font-size: 0.95rem; }
-      .live-btn { font-size: 0.88rem; padding: 11px 22px; }
+      .live-copy p { font-size: 0.76rem; }
+      .live-btn { font-size: 0.74rem; padding: 8px 16px; }
       .live-cards {
-        inset-inline: 10px;
-        bottom: 10px;
-        gap: 8px;
+        inset-inline: 9px;
+        bottom: 9px;
+        gap: 6px;
       }
-      .live-card { min-height: 44px; }
-      .live-card b { font-size: 0.82rem; padding: 8px 4px; }
+      .live-card { min-height: 36px; }
+      .live-card b { font-size: 0.68rem; padding: 6px 3px; }
 
       .build-cta {
         bottom: 3.5%;
@@ -1612,7 +1622,8 @@
     .wa-invite-label {
       font-size: 0.68rem;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
       color: var(--gold);
       text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
     }
@@ -1731,13 +1742,10 @@
         <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> נותרו מקומות לדמו החודש</p>
 
         <h1 class="display reveal">
-          אתר תדמית לדוגמה לעסק שלך, <span class="accent">חינם</span>
+          אתר תדמית לעסק שלך, <span class="accent">חינם</span>
         </h1>
 
-        <p class="sub reveal">
-          דמו מעוצב במלואו, ללא פונקציונליות.
-          נשאר שלך גם אם לא תזמין את האתר המלא.
-        </p>
+        <p class="sub reveal">דמו מעוצב במלואו, ונשאר שלך.</p>
 
         <div class="hero-actions reveal">
           <a class="btn btn-primary" href="#lead-form">רוצה דמו&nbsp;»</a>
