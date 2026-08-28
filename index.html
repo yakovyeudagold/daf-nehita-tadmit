@@ -303,21 +303,17 @@
     .brand {
       display: flex;
       align-items: center;
-      justify-content: center;
       height: var(--nav-h);
-      width: 132px;
-      overflow: hidden;
       flex-shrink: 0;
       text-decoration: none;
     }
     .brand img {
       display: block;
-      height: 118px;
-      width: 118px;
+      height: 32px;
+      width: auto;
       max-width: none;
-      object-fit: cover;
-      object-position: center;
     }
+    @media (min-width: 1024px) { .brand img { height: 36px; } }
     .nav-links { display: flex; align-items: center; gap: 30px; }
     .nav-links a {
       font-size: 0.8rem;
@@ -1501,19 +1497,15 @@
     }
     .footer-brand {
       display: block;
-      width: 196px;
-      height: 86px;
-      overflow: hidden;
-      margin: 0 0 12px;
+      width: max-content;
+      margin: 0 0 16px;
       text-decoration: none;
     }
     .footer-brand img {
       display: block;
-      width: 196px;
-      height: 196px;
-      object-fit: cover;
-      object-position: center;
-      margin-top: -55px;
+      height: 58px;
+      width: auto;
+      max-width: none;
     }
     .footer-grid p { margin: 0; max-width: 36ch; line-height: 1.5; }
     .footer-grid h4 {
