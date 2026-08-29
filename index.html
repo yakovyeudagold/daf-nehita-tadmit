@@ -1159,7 +1159,7 @@
        ============================================================ */
     .work-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: clamp(16px, 2.4vw, 26px);
       margin-top: clamp(40px, 6vw, 66px);
     }
@@ -1221,6 +1221,12 @@
       max-width: 62%;
       max-height: 52%;
       object-fit: contain;
+    }
+    .work-thumb--photo {
+      background: #111;
+    }
+    .work-thumb--photo img {
+      object-position: center;
     }
     .work-body {
       display: flex;
@@ -1844,11 +1850,50 @@
     <section class="section-pad section-light" id="portfolio">
       <div class="container">
         <p class="eyebrow reveal"><span class="dot" aria-hidden="true"></span> תיק עבודות</p>
-        <h2 class="title reveal">עבודה אמיתית שכבר באוויר</h2>
-        <p class="sub reveal">פרויקט אמיתי שתוכנן, עוצב ונבנה עד לפרטים הקטנים.</p>
+        <h2 class="title reveal">עבודות אמיתיות שכבר באוויר</h2>
+        <p class="sub reveal">פרויקטים שתוכננו, עוצבו ונבנו עד לפרטים הקטנים.</p>
 
         <!-- במובייל הגריד הופך לגלריה אופקית עם הצמדה -->
         <div class="work-grid" id="work-grid">
+
+          <!-- אתר אמיתי: AI AfterHours -->
+          <a class="work reveal" href="https://yakov-yehuda-studio.vercel.app/#demo" target="_blank" rel="noopener"
+             aria-label="AI AfterHours, AI קולי לעסקים, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-afterhours.jpg"
+                   alt="תמונת תדמית של אתר AI AfterHours" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>AI AfterHours</h3>
+              <p>AI קולי לעסקים</p>
+            </div>
+          </a>
+
+          <!-- אתר אמיתי: RideWithYoav -->
+          <a class="work reveal" href="https://ridewithyoav-umber.vercel.app/" target="_blank" rel="noopener"
+             aria-label="RideWithYoav, יום הקהילה, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-ridewithyoav.jpg"
+                   alt="תמונת תדמית של אתר RideWithYoav" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>RideWithYoav</h3>
+              <p>קהילת רכיבה</p>
+            </div>
+          </a>
+
+          <!-- אתר אמיתי: כהן ושות׳ -->
+          <a class="work reveal" href="https://cohen-law-website-ebon.vercel.app/" target="_blank" rel="noopener"
+             aria-label="כהן ושות׳, משרד עורכי דין, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-cohen-law.jpg"
+                   alt="תמונת תדמית של אתר כהן ושות׳" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>כהן ושות׳</h3>
+              <p>משרד עורכי דין</p>
+            </div>
+          </a>
 
           <!-- אתר אמיתי: פסגת הנופש -->
           <a class="work reveal" href="https://pisgathanofesh.com/" target="_blank" rel="noopener"
