@@ -66,10 +66,16 @@
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
+      width: 100%;
+      overflow-x: hidden;
     }
 
     body {
       margin: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      position: relative;
       background: var(--black);
       color: var(--text);
       /* קודם כל הפונט המערכתי של אפל, ואז Assistant לשאר המכשירים */
@@ -80,7 +86,6 @@
       letter-spacing: -0.01em;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      overflow-x: clip;
     }
 
     img { max-width: 100%; display: block; }
@@ -142,7 +147,7 @@
       padding-inline: var(--gutter);
     }
 
-    section { position: relative; }
+    section { position: relative; overflow-x: hidden; }
     section[id] { scroll-margin-top: calc(var(--nav-h) + 20px); }
 
     /* מרווחים נדיבים - זה מה שיוצר את תחושת השקט והיוקרה */
@@ -339,7 +344,7 @@
     .hero {
       text-align: center;
       padding-block: clamp(44px, 8vw, 80px) clamp(34px, 5vw, 56px);
-      overflow: visible;
+      overflow: hidden;
     }
 
     /* זוהר רך אחד בלבד ברקע - רמז לעומק, בלי דרמה */
@@ -347,9 +352,10 @@
       content: "";
       position: absolute;
       top: -22%;
-      inset-inline-start: 50%;
-      transform: translateX(50%);
-      width: min(120vw, 900px);
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: min(100%, 900px);
       aspect-ratio: 1.6;
       background: radial-gradient(ellipse at center, rgba(108, 77, 255, 0.28), transparent 62%);
       pointer-events: none;
@@ -396,10 +402,10 @@
       --ease-snap: cubic-bezier(0.22, 1.35, 0.36, 1);
       --frame-scale: 1;
       position: relative;
-      width: min(620px, 88vw);
+      width: min(620px, 88%);
       aspect-ratio: 16 / 10;
       margin-inline: auto;
-      overflow: visible;
+      overflow: hidden;
       touch-action: pan-y;
       background: transparent;
       direction: ltr;
@@ -427,8 +433,8 @@
 
     .build-grid {
       position: absolute;
-      left: -14%;
-      right: -14%;
+      left: 0;
+      right: 0;
       top: 18%;
       bottom: -42%;
       pointer-events: none;
@@ -1007,6 +1013,7 @@
         aspect-ratio: 3 / 4;
         min-height: 0;
         transform: none;
+        overflow: hidden;
       }
       .live-site { border-radius: 22px; }
       .live-chrome em { display: block; font-size: 0.56rem; }
@@ -1310,12 +1317,12 @@
     /* ============================================================
        13. טופס דו-שלבי
        ============================================================ */
-    .form-wrap { position: relative; }
+    .form-wrap { position: relative; overflow: hidden; }
     /* זוהר סגול רחב מאחורי הכרטיס - מושך את העין בלי צבע שטוח */
     .form-wrap::before {
       content: "";
       position: absolute;
-      inset: -12% -6%;
+      inset: -12% 0;
       background: radial-gradient(ellipse at 50% 40%, rgba(108, 77, 255, 0.34), transparent 65%);
       pointer-events: none;
     }
@@ -1666,10 +1673,12 @@
         grid-template-columns: none;
         gap: 14px;
         overflow-x: auto;
+        overscroll-behavior-x: contain;
+        max-width: 100%;
         scroll-snap-type: x mandatory;
         scroll-padding-inline: var(--gutter);
-        margin-inline: calc(var(--gutter) * -1);
-        padding-inline: var(--gutter);
+        margin-inline: 0;
+        padding-inline: 0;
         padding-bottom: 6px;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
