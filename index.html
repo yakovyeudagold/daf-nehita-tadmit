@@ -404,10 +404,10 @@
       --ease-snap: cubic-bezier(0.22, 1.35, 0.36, 1);
       --frame-scale: 1;
       position: relative;
-      width: min(620px, 88%);
+      width: min(760px, 94%);
       aspect-ratio: 16 / 10;
       margin-inline: auto;
-      overflow: hidden;
+      overflow: visible;
       touch-action: pan-y;
       background: transparent;
       direction: ltr;
@@ -559,12 +559,10 @@
     .live-site {
       position: absolute;
       inset: 0;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #0b0b12;
-      box-shadow:
-        0 30px 70px rgba(0, 0, 0, 0.55),
-        0 0 0 1px rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+      box-shadow: none;
       opacity: 1;
       transform: none;
     }
@@ -582,13 +580,7 @@
     }
 
     .live-site::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.14) 50%, transparent 58%);
-      transform: translateX(-130%);
+      display: none;
     }
     .build.is-alive .live-site::after {
       animation: shineSweep 3.8s ease-in-out 0.4s infinite;
@@ -598,71 +590,18 @@
       40%, 100% { transform: translateX(130%); }
     }
 
-    .live-chrome {
-      position: relative;
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      height: 11%;
-      padding: 0 12px;
-      background: rgba(18, 18, 24, 0.92);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      transform: translateZ(16px);
-    }
-    .live-chrome i {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #3a3a42;
-    }
-    .live-chrome i:nth-child(1) { background: #ff5f57; }
-    .live-chrome i:nth-child(2) { background: #febc2e; }
-    .live-chrome i:nth-child(3) { background: #28c840; }
-    .live-chrome em {
-      margin-inline-start: auto;
-      font-style: normal;
-      font-size: clamp(0.48rem, 1.2vw, 0.68rem);
-      color: rgba(255, 255, 255, 0.38);
-      letter-spacing: 0.02em;
-    }
-
-    .live-nav {
-      position: relative;
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      gap: clamp(8px, 1.6vw, 16px);
-      height: 12%;
-      padding: 0 14px;
-      direction: rtl;
-      transform: translateZ(28px);
-    }
-    .live-nav b {
-      margin-inline-end: auto;
-      font-size: clamp(0.58rem, 1.5vw, 0.82rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: #fff;
-    }
-    .live-nav span {
-      font-size: clamp(0.42rem, 1.1vw, 0.62rem);
-      color: rgba(255, 255, 255, 0.5);
-    }
-
     .live-hero {
       position: relative;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-areas: "stage";
       direction: rtl;
-      height: 77%;
+      height: 100%;
       min-height: 0;
       padding: 0;
-      overflow: hidden;
+      overflow: visible;
       background:
-        radial-gradient(ellipse at 50% 42%, rgba(108, 77, 255, 0.38), transparent 58%),
-        linear-gradient(180deg, #101018 0%, #07070c 100%);
+        radial-gradient(ellipse at 50% 46%, rgba(108, 77, 255, 0.30), transparent 64%);
     }
 
     .orb-wrap {
@@ -680,8 +619,8 @@
     }
     .orb {
       position: relative;
-      width: min(58%, 280px);
-      max-height: 78%;
+      width: min(66%, 360px);
+      max-height: 86%;
       aspect-ratio: 1;
       transform-style: preserve-3d;
       overflow: visible;
@@ -771,10 +710,10 @@
       gap: 10px;
       padding: 6% 8% 18%;
       text-align: center;
-      background: linear-gradient(180deg, rgba(7, 7, 12, 0.08) 0%, rgba(7, 7, 12, 0.55) 62%, rgba(7, 7, 12, 0.88) 100%);
+      background: radial-gradient(ellipse at 50% 46%, rgba(7, 7, 12, 0.55) 0%, transparent 66%);
     }
     .live-copy small {
-      font-size: clamp(0.62rem, 1.1vw, 0.76rem);
+      font-size: clamp(0.7rem, 1.4vw, 0.9rem);
       font-weight: 700;
       letter-spacing: 0.08em;
       color: var(--lime);
@@ -782,7 +721,7 @@
     }
     .live-copy h3 {
       margin: 0;
-      font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+      font-size: clamp(1.8rem, 4.4vw, 2.9rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.05;
@@ -792,18 +731,18 @@
     .live-copy p {
       margin: 0;
       max-width: 28ch;
-      font-size: clamp(0.74rem, 1.3vw, 0.88rem);
+      font-size: clamp(0.85rem, 1.6vw, 1.02rem);
       color: rgba(255, 255, 255, 0.86);
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
     }
     .live-btn {
       display: inline-flex;
       margin-top: 6px;
-      padding: 8px 18px;
+      padding: 10px 22px;
       border-radius: 100px;
       background: var(--purple);
       color: #fff;
-      font-size: clamp(0.82rem, 1.5vw, 0.95rem);
+      font-size: clamp(0.9rem, 1.7vw, 1.05rem);
       font-weight: 600;
       box-shadow: 0 10px 24px rgba(108, 77, 255, 0.5);
     }
@@ -856,8 +795,8 @@
     .live-card i { display: none; }
     .live-card b {
       display: block;
-      padding: 10px 8px;
-      font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+      padding: 12px 8px;
+      font-size: clamp(0.86rem, 1.8vw, 1.05rem);
       font-weight: 700;
       color: #fff;
       direction: rtl;
@@ -1011,22 +950,18 @@
 
       .build {
         --frame-scale: 1;
-        width: min(88%, 300px);
-        aspect-ratio: 3 / 4;
+        width: min(94%, 360px);
+        aspect-ratio: 4 / 5;
         min-height: 0;
         transform: none;
-        overflow: hidden;
+        overflow: visible;
       }
-      .live-site { border-radius: 22px; }
-      .live-chrome em { display: block; font-size: 0.56rem; }
-      .live-nav span { display: inline; font-size: 0.56rem; }
-      .live-nav b { font-size: 0.8rem; }
-      .live-chrome, .live-nav { z-index: 4; position: relative; }
+      .live-site { border-radius: 0; }
 
-      .live-hero { height: 74%; }
+      .live-hero { height: 100%; }
       .orb {
-        width: min(66%, 180px);
-        max-height: 50%;
+        width: min(76%, 250px);
+        max-height: 62%;
       }
       .live-copy {
         padding: 8% 14px 24%;
@@ -1207,12 +1142,17 @@
     }
     /* תצוגה מקדימה של אתר אמיתי */
     .work-thumb--live {
+      position: relative;
+      overflow: hidden;
       padding: 0;
       display: grid;
       place-items: center;
       background: linear-gradient(165deg, #1B4332 0%, #081C15 100%);
     }
     .work-thumb--live img {
+      position: absolute;
+      inset: 0;
+      display: block;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1765,18 +1705,8 @@
         <div class="hero-visual-wrap">
           <div class="frame-scroll" id="frame-scroll">
             <div class="frame-sticky">
-              <div class="build" id="site-preview" aria-label="חלון אתר תדמית חי">
+              <div class="build" id="site-preview" aria-label="מותג חי בתלת מימד">
                 <div class="live-site">
-                  <div class="live-chrome" aria-hidden="true">
-                    <i></i><i></i><i></i>
-                    <em>your-brand.co.il</em>
-                  </div>
-                  <div class="live-nav">
-                    <b>העסק שלך</b>
-                    <span>עבודות</span>
-                    <span>סטודיו</span>
-                    <span>צור קשר</span>
-                  </div>
                   <div class="live-hero">
                     <div class="live-copy">
                       <small>אתר תדמית בתלת מימד</small>
@@ -1858,32 +1788,6 @@
         <!-- במובייל הגריד הופך לגלריה אופקית עם הצמדה -->
         <div class="work-grid" id="work-grid">
 
-          <!-- אתר אמיתי: AI AfterHours -->
-          <a class="work reveal" href="https://yakov-yehuda-studio.vercel.app/#demo" target="_blank" rel="noopener"
-             aria-label="AI AfterHours, AI קולי לעסקים, פתיחה בכרטיסייה חדשה">
-            <div class="work-thumb work-thumb--live work-thumb--photo">
-              <img src="assets/work-afterhours.jpg"
-                   alt="תמונת תדמית של אתר AI AfterHours" loading="lazy">
-            </div>
-            <div class="work-body">
-              <h3>AI AfterHours</h3>
-              <p>AI קולי לעסקים</p>
-            </div>
-          </a>
-
-          <!-- אתר אמיתי: RideWithYoav -->
-          <a class="work reveal" href="https://ridewithyoav-umber.vercel.app/" target="_blank" rel="noopener"
-             aria-label="RideWithYoav, יום הקהילה, פתיחה בכרטיסייה חדשה">
-            <div class="work-thumb work-thumb--live work-thumb--photo">
-              <img src="assets/work-ridewithyoav.jpg"
-                   alt="תמונת תדמית של אתר RideWithYoav" loading="lazy">
-            </div>
-            <div class="work-body">
-              <h3>RideWithYoav</h3>
-              <p>קהילת רכיבה</p>
-            </div>
-          </a>
-
           <!-- אתר אמיתי: כהן ושות׳ -->
           <a class="work reveal" href="https://cohen-law-website-ebon.vercel.app/" target="_blank" rel="noopener"
              aria-label="כהן ושות׳, משרד עורכי דין, פתיחה בכרטיסייה חדשה">
@@ -1900,13 +1804,39 @@
           <!-- אתר אמיתי: פסגת הנופש -->
           <a class="work reveal" href="https://pisgathanofesh.com/" target="_blank" rel="noopener"
              aria-label="פסגת הנופש, נופש ואירוח, פתיחה בכרטיסייה חדשה">
-            <div class="work-thumb work-thumb--live work-thumb--logo">
-              <img src="https://pisgathanofesh.com/assets/logo-main-DA1ofO9a.png"
-                   alt="תצוגה מקדימה של אתר פסגת הנופש" loading="lazy">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-pisgat-hanofesh.jpg"
+                   alt="סוויטת נופש עם בריכה ונוף בשקיעה" loading="lazy">
             </div>
             <div class="work-body">
               <h3>פסגת הנופש</h3>
               <p>נופש ואירוח</p>
+            </div>
+          </a>
+
+          <!-- אתר אמיתי: RideWithYoav -->
+          <a class="work reveal" href="https://ridewithyoav-umber.vercel.app/" target="_blank" rel="noopener"
+             aria-label="RideWithYoav, יום הקהילה, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-ridewithyoav.jpg"
+                   alt="תמונת תדמית של אתר RideWithYoav" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>RideWithYoav</h3>
+              <p>קהילת רכיבה</p>
+            </div>
+          </a>
+
+          <!-- אתר אמיתי: AI AfterHours -->
+          <a class="work reveal" href="https://yakov-yehuda-studio.vercel.app/#demo" target="_blank" rel="noopener"
+             aria-label="AI AfterHours, AI קולי לעסקים, פתיחה בכרטיסייה חדשה">
+            <div class="work-thumb work-thumb--live work-thumb--photo">
+              <img src="assets/work-afterhours.jpg"
+                   alt="תמונת תדמית של אתר AI AfterHours" loading="lazy">
+            </div>
+            <div class="work-body">
+              <h3>AI AfterHours</h3>
+              <p>AI קולי לעסקים</p>
             </div>
           </a>
         </div>
