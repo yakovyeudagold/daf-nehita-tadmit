@@ -92,14 +92,14 @@
       -webkit-text-size-adjust: 100%;
       text-size-adjust: 100%;
       width: 100%;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     body {
       margin: 0;
       width: 100%;
       max-width: 100%;
-      overflow-x: hidden;
+      overflow-x: clip;
       position: relative;
       background: var(--black);
       color: var(--text);
@@ -695,61 +695,67 @@
     /* ============================================================
        11. שירותים
        ============================================================ */
-    .svc-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: clamp(14px, 2vw, 22px);
-      margin-top: clamp(44px, 6vw, 70px);
+    /* ערימת כרטיסים דביקה — נערמים אחד מעל השני לפי קצב הגלילה */
+    .svc-stack {
+      list-style: none;
+      margin: clamp(44px, 6vw, 72px) 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(22px, 3.4vw, 40px);
+    }
+    .svc-item {
+      position: sticky;
+      top: calc(var(--svc-top, 96px) + var(--i, 0) * 16px);
+      will-change: transform;
     }
     .svc {
       position: relative;
-      padding: clamp(28px, 3.6vw, 40px);
-      border-radius: var(--r-lg);
-      background: linear-gradient(180deg, rgba(22, 22, 31, 0.7), rgba(12, 12, 18, 0.7));
-      border: 1px solid var(--line);
       overflow: hidden;
-      transition: transform 0.45s var(--ease), border-color 0.45s var(--ease), background-color 0.45s var(--ease);
-    }
-    .svc::before {
-      content: "";
-      position: absolute;
-      inset-inline-end: -30%;
-      top: -40%;
-      width: 60%;
-      aspect-ratio: 1;
-      background: radial-gradient(circle, rgba(108, 77, 255, 0.18), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.5s var(--ease);
-      pointer-events: none;
+      display: grid;
+      grid-template-columns: minmax(auto, 0.45fr) 1fr;
+      align-items: center;
+      gap: clamp(18px, 4vw, 56px);
+      min-height: clamp(210px, 32vh, 290px);
+      padding: clamp(28px, 4vw, 54px);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(130% 120% at 85% 0%, rgba(108, 77, 255, 0.14), transparent 55%),
+        linear-gradient(180deg, #17171f, #0e0e15);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.04) inset,
+        0 34px 70px -34px rgba(0, 0, 0, 0.85);
+      transform-origin: center top;
+      transition: border-color 0.4s var(--ease);
     }
     .svc-n {
       display: block;
-      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      font-size: clamp(2.8rem, 9vw, 5rem);
       font-weight: 700;
-      letter-spacing: 0.02em;
-      color: var(--purple-lit);
-      margin-bottom: 18px;
+      line-height: 0.85;
+      letter-spacing: -0.05em;
+      margin: 0;
+      color: transparent;
+      background: linear-gradient(180deg, var(--purple-lit), rgba(108, 77, 255, 0.3));
+      -webkit-background-clip: text;
+      background-clip: text;
     }
     .svc h3 {
-      font-size: clamp(1.35rem, 3.4vw, 1.7rem);
-      line-height: 1.15;
+      font-size: clamp(1.45rem, 3.6vw, 2rem);
+      line-height: 1.12;
       letter-spacing: -0.03em;
-      margin-bottom: 12px;
+      margin: 0 0 12px;
     }
     .svc p {
       margin: 0;
-      font-size: 1.02rem;
+      font-size: clamp(1rem, 2.4vw, 1.08rem);
       line-height: 1.55;
       color: var(--text-dim);
-      max-width: 34ch;
+      max-width: 46ch;
     }
     @media (hover: hover) and (pointer: fine) {
-      .svc:hover {
-        transform: translateY(-6px);
-        border-color: var(--line-2);
-        background: linear-gradient(180deg, rgba(26, 26, 38, 0.8), rgba(14, 14, 22, 0.8));
-      }
-      .svc:hover::before { opacity: 1; }
+      .svc:hover { border-color: var(--line-2); }
     }
 
     /* ============================================================
@@ -1373,8 +1379,12 @@
       .process-step:first-child { border-top: none; }
     }
 
+    @media (max-width: 640px) {
+      .svc { grid-template-columns: 1fr; gap: 14px; min-height: 0; align-items: start; }
+      .svc-n { font-size: clamp(2.6rem, 14vw, 3.4rem); }
+    }
+
     @media (max-width: 940px) {
-      .svc-grid { grid-template-columns: 1fr; }
       .about { grid-template-columns: 1fr; }
       .portrait { max-width: 340px; margin-inline: auto; order: -1; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -1516,28 +1526,44 @@
         <h2 class="title reveal">מהרעיון ועד האתר שעולה לאוויר</h2>
         <p class="sub reveal">תהליך אחד, שפה עיצובית אחת, אחריות מלאה מהמסך הראשון ועד ההשקה.</p>
 
-        <div class="svc-grid">
-          <article class="svc reveal">
-            <span class="svc-n">01</span>
-            <h3>אסטרטגיה ומבנה</h3>
-            <p>מגדירים מטרה, קהל ומסר, ובונים מבנה שמוביל את המבקר לפעולה.</p>
-          </article>
-          <article class="svc reveal">
-            <span class="svc-n">02</span>
-            <h3>UI / UX</h3>
-            <p>עיצוב נקי, מודרני וממוקד חוויה, שנראה ומרגיש יוקרתי בכל מסך.</p>
-          </article>
-          <article class="svc reveal">
-            <span class="svc-n">03</span>
-            <h3>פיתוח</h3>
-            <p>קוד מהיר ורספונסיבי שמתאים לכל מכשיר, בלי תבניות גנריות.</p>
-          </article>
-          <article class="svc reveal">
-            <span class="svc-n">04</span>
-            <h3>השקה ואופטימיזציה</h3>
-            <p>עולים לאוויר, מודדים, ומשפרים ביצועים, מהירות וחווית גלישה.</p>
-          </article>
-        </div>
+        <ol class="svc-stack">
+          <li class="svc-item" style="--i:0">
+            <article class="svc">
+              <span class="svc-n">01</span>
+              <div>
+                <h3>אסטרטגיה ומבנה</h3>
+                <p>מגדירים מטרה, קהל ומסר, ובונים מבנה שמוביל את המבקר לפעולה.</p>
+              </div>
+            </article>
+          </li>
+          <li class="svc-item" style="--i:1">
+            <article class="svc">
+              <span class="svc-n">02</span>
+              <div>
+                <h3>UI / UX</h3>
+                <p>עיצוב נקי, מודרני וממוקד חוויה, שנראה ומרגיש יוקרתי בכל מסך.</p>
+              </div>
+            </article>
+          </li>
+          <li class="svc-item" style="--i:2">
+            <article class="svc">
+              <span class="svc-n">03</span>
+              <div>
+                <h3>פיתוח</h3>
+                <p>קוד מהיר ורספונסיבי שמתאים לכל מכשיר, בלי תבניות גנריות.</p>
+              </div>
+            </article>
+          </li>
+          <li class="svc-item" style="--i:3">
+            <article class="svc">
+              <span class="svc-n">04</span>
+              <div>
+                <h3>השקה ואופטימיזציה</h3>
+                <p>עולים לאוויר, מודדים, ומשפרים ביצועים, מהירות וחווית גלישה.</p>
+              </div>
+            </article>
+          </li>
+        </ol>
       </div>
     </section>
 
@@ -1940,7 +1966,46 @@
     })();
 
     /* ============================================================
-       5. תהליך — שלב פעיל בגלילה (דסקטופ)
+       5. שירותים — ערימת כרטיסים דביקה לפי קצב הגלילה
+       ============================================================ */
+    (function initSvcStack() {
+      const items = Array.from(document.querySelectorAll('.svc-item'));
+      if (items.length < 2) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const cards = items.map(it => it.querySelector('.svc'));
+      let ticking = false;
+
+      function update() {
+        ticking = false;
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i];
+          const next = cards[i + 1];
+          let p = 0;
+          if (next) {
+            const r = card.getBoundingClientRect();
+            const rn = next.getBoundingClientRect();
+            if (r.height > 0) p = (r.bottom - rn.top) / r.height;
+            p = Math.max(0, Math.min(1, p));
+          }
+          card.style.transform = 'scale(' + (1 - p * 0.055).toFixed(4) + ')';
+          card.style.filter = 'brightness(' + (1 - p * 0.42).toFixed(3) + ')';
+        }
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    })();
+
+    /* ============================================================
+       6. תהליך — שלב פעיל בגלילה (דסקטופ)
        ============================================================ */
     (function initProcess() {
       const steps = Array.from(document.querySelectorAll('.process-step'));
