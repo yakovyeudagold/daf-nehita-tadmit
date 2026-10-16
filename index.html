@@ -518,7 +518,7 @@
       position: relative;
       text-align: center;
       padding-block: clamp(52px, 10vw, 110px) clamp(40px, 6vw, 70px);
-      overflow: hidden;
+      overflow: clip;              /* clip (ולא hidden) כדי לא לשבור את ה-sticky של הבמה */
     }
     .hero-bg {
       position: absolute;
@@ -550,18 +550,37 @@
       margin-top: 30px;
     }
 
-    /* ----- קומפוזיציית עבודות אמיתיות ----- */
+    /* ----- קומפוזיציית עבודות אמיתיות · מורף גלילה בהשראת אפל -----
+       הבמה "ננעלת" (sticky) בזמן הגלילה, והכרטיסים נפרשים מערימה
+       תלת-מימדית קומפקטית אל קומפוזיציה מסודרת ושטוחה. */
+    .hero-scroll {
+      position: relative;
+      height: 210vh;                 /* טווח הגלילה שעליו מתנגן המורף */
+      margin-top: clamp(30px, 5vw, 60px);
+    }
+    .hero-sticky {
+      position: sticky;
+      top: var(--nav-h);
+      height: calc(100svh - var(--nav-h));
+      min-height: 440px;
+      display: grid;
+      place-items: center;
+      overflow: clip;                /* חיתוך פנימי בלבד — אין גלישה לדף */
+    }
     .hero-stage {
       position: relative;
-      margin: clamp(44px, 7vw, 84px) auto 0;
+      margin: 0 auto;
       width: min(960px, 100%);
       aspect-ratio: 16 / 10;
+      max-height: 84%;
       perspective: 1600px;
+      perspective-origin: 50% 42%;
     }
     .hero-stage-inner {
       position: absolute;
       inset: 0;
       transform-style: preserve-3d;
+      transform: rotateX(0deg) scale(1) translateY(0);
       will-change: transform;
     }
 
@@ -654,11 +673,61 @@
       z-index: 2;
     }
 
-    .float-anim { animation: floatY 7s ease-in-out infinite; }
-    .float-anim-2 { animation: floatY 8.5s ease-in-out 0.6s infinite; }
-    @keyframes floatY {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+    /* הכרטיסים מונעים ע"י מורף הגלילה (JS) — טרנספורם/אטימות בלבד */
+    .showcase { will-change: transform, opacity; backface-visibility: hidden; }
+
+    /* תגיות זכוכית צפות — מתגלות בסוף המורף */
+    .sc-tag {
+      position: absolute;
+      z-index: 6;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      font-size: clamp(0.66rem, 1.4vw, 0.82rem);
+      font-weight: 600;
+      color: #fff;
+      direction: rtl;
+      white-space: nowrap;
+      border-radius: 100px;
+      background: rgba(18, 18, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
+    }
+    .sc-tag .d {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 10px var(--lime);
+    }
+    .sc-tag .d.p { background: var(--purple); box-shadow: 0 0 10px var(--purple); }
+    .sc-tag-1 { top: 2%; inset-inline-start: 1%; }
+    .sc-tag-2 { bottom: 4%; inset-inline-end: 1%; }
+
+    /* ----- מובייל: מורף קליל יותר, פחות עומק ----- */
+    @media (max-width: 860px) {
+      .hero-scroll { height: 175vh; margin-top: 18px; }
+      .hero-sticky { min-height: 360px; }
+      .hero-stage { max-height: 78%; perspective: 1100px; }
+      .sc-tag { padding: 6px 11px; }
+    }
+    @media (max-width: 480px) {
+      .sc-tag-2 { display: none; }     /* פחות עומס במסך צר */
+      .sc-tag { font-size: 0.62rem; }
+    }
+
+    /* ----- העדפת מופחת-תנועה: מצב סופי סטטי, ללא נעילת גלילה ----- */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-scroll { height: auto; margin-top: clamp(30px, 5vw, 60px); }
+      .hero-sticky {
+        position: static;
+        height: auto;
+        min-height: 0;
+      }
+      .hero-stage { max-height: none; }
+      .hero-stage-inner { transform: none; }
     }
 
     /* ============================================================
@@ -1486,21 +1555,28 @@
           <a class="link" href="#portfolio">לתיק העבודות <span class="chev" aria-hidden="true">‹</span></a>
         </div>
 
-        <!-- קומפוזיציית עבודות אמיתיות -->
-        <div class="hero-stage reveal" aria-label="עבודות נבחרות מהסטודיו">
-          <div class="hero-stage-inner" id="hero-stage-inner">
-            <div class="showcase showcase-back showcase-back-1" aria-hidden="true">
-              <img src="assets/work-pisgat-hanofesh.jpg" alt="" loading="lazy">
-            </div>
-            <div class="showcase showcase-back showcase-back-2" aria-hidden="true">
-              <img src="assets/work-cohen-law.jpg" alt="" loading="lazy">
-            </div>
-            <div class="showcase showcase-main float-anim">
-              <div class="showcase-bar" aria-hidden="true"><i></i><i></i><i></i></div>
-              <img src="assets/work-afterhours.jpg" alt="עבודה מתיק העבודות של הסטודיו — אתר AI AfterHours" loading="eager">
-            </div>
-            <div class="showcase showcase-phone float-anim-2" aria-hidden="true">
-              <img src="assets/work-ridewithyoav.jpg" alt="" loading="lazy">
+        <!-- קומפוזיציית עבודות אמיתיות · מורף גלילה בהשראת אפל -->
+        <div class="hero-scroll" id="hero-scroll">
+          <div class="hero-sticky">
+            <div class="hero-stage" aria-label="עבודות נבחרות מהסטודיו">
+              <div class="hero-stage-inner" id="hero-stage-inner">
+                <div class="showcase showcase-back showcase-back-1" aria-hidden="true">
+                  <img src="assets/work-pisgat-hanofesh.jpg" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="showcase showcase-back showcase-back-2" aria-hidden="true">
+                  <img src="assets/work-cohen-law.jpg" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="showcase showcase-main">
+                  <div class="showcase-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+                  <img src="assets/work-afterhours.jpg" alt="עבודה מתיק העבודות של הסטודיו — אתר AI AfterHours" loading="eager" decoding="async" fetchpriority="high">
+                </div>
+                <div class="showcase showcase-phone" aria-hidden="true">
+                  <img src="assets/work-ridewithyoav.jpg" alt="" loading="lazy" decoding="async">
+                </div>
+
+                <span class="sc-tag sc-tag-1"><span class="d" aria-hidden="true"></span>עוצב ונבנה ב-48ש׳</span>
+                <span class="sc-tag sc-tag-2"><span class="d p" aria-hidden="true"></span>אתרים אמיתיים באוויר</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1937,31 +2013,87 @@
     })();
 
     /* ============================================================
-       4. פרלקסה עדינה בקומפוזיציית ההירו
+       4. מורף גלילה לקומפוזיציית ההירו — בהשראת דפי המוצר של אפל
+       הבמה ננעלת (sticky) ומתקדמת לפי התקדמות הגלילה: הכרטיסים
+       נפרשים מערימה תלת-מימדית קומפקטית אל קומפוזיציה מסודרת.
+       טרנספורם/אטימות בלבד, מונע ב-rAF, 60fps, ללא גלישה אופקית.
        ============================================================ */
-    (function initHeroParallax() {
-      const stage = document.getElementById('hero-stage-inner');
-      if (!stage) return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    (function initHeroMorph() {
+      const scroll = document.getElementById('hero-scroll');
+      const inner  = document.getElementById('hero-stage-inner');
+      if (!scroll || !inner) return;
+      const sticky = scroll.querySelector('.hero-sticky');
 
-      const hero = stage.closest('.hero');
-      let raf = null, tx = 0, ty = 0;
+      const main  = inner.querySelector('.showcase-main');
+      const back1 = inner.querySelector('.showcase-back-1');
+      const back2 = inner.querySelector('.showcase-back-2');
+      const phone = inner.querySelector('.showcase-phone');
+      const tags  = Array.from(inner.querySelectorAll('.sc-tag'));
 
-      hero.addEventListener('pointermove', (e) => {
-        const r = hero.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        tx = px * 10;
-        ty = py * 8;
-        if (!raf) raf = requestAnimationFrame(apply);
-      });
-      hero.addEventListener('pointerleave', () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(apply); });
+      const clamp = (v, a, b) => (v < a ? a : (v > b ? b : v));
+      const lerp  = (a, b, t) => a + (b - a) * t;
+      const easeOut = t => 1 - Math.pow(1 - t, 3);
+      const seg   = (p, s, e) => clamp((p - s) / (e - s), 0, 1);
+      const isMobile = () => window.matchMedia('(max-width: 860px)').matches;
 
-      function apply() {
-        raf = null;
-        stage.style.transform =
-          'rotateX(' + (-ty * 0.4) + 'deg) rotateY(' + (tx * 0.4) + 'deg) translate3d(' + tx + 'px,' + ty + 'px,0)';
+      function apply(p) {
+        const m  = isMobile();
+        const dz = m ? 0.5 : 1;              /* עומק מופחת במובייל */
+        const e  = easeOut(p);
+
+        /* שכבת-על כללית: הטיה, קנה מידה והיסט שמתיישבים ל-0 */
+        inner.style.transform =
+          'rotateX(' + lerp(m ? 10 : 14, 0, e) + 'deg) scale(' + lerp(0.9, 1, e) + ') translateY(' + lerp(m ? 20 : 30, 0, e) + 'px)';
+
+        if (main) {
+          main.style.transform = 'translate3d(0,' + lerp(4, 0, e) + '%,' + (lerp(-40, 0, e) * dz) + 'px) scale(' + lerp(0.96, 1, e) + ')';
+          main.style.opacity = String(lerp(0.4, 1, easeOut(seg(p, 0, 0.22))));
+        }
+        if (back1) {
+          const ae = easeOut(seg(p, 0.08, 0.72));
+          back1.style.transform = 'translate3d(' + lerp(-16, 0, ae) + '%,' + lerp(12, 0, ae) + '%,' + (lerp(-20, -60, ae) * dz) + 'px) rotate(' + lerp(0, -5, ae) + 'deg) scale(' + lerp(0.82, 1, ae) + ')';
+          back1.style.opacity = String(seg(p, 0.08, 0.5) * 0.92);
+        }
+        if (back2) {
+          const be = easeOut(seg(p, 0.14, 0.8));
+          back2.style.transform = 'translate3d(' + lerp(16, 0, be) + '%,' + lerp(10, 0, be) + '%,' + (lerp(-20, -80, be) * dz) + 'px) rotate(' + lerp(0, 5, be) + 'deg) scale(' + lerp(0.82, 1, be) + ')';
+          back2.style.opacity = String(seg(p, 0.14, 0.52) * 0.92);
+        }
+        if (phone) {
+          const pe = easeOut(seg(p, 0.12, 0.86));
+          phone.style.transform = 'translate3d(' + lerp(-24, 0, pe) + '%,' + lerp(-18, 0, pe) + '%,' + (lerp(-10, 55, pe) * dz) + 'px) rotateY(' + lerp(24, 0, pe) + 'deg) scale(' + lerp(0.85, 1, pe) + ')';
+          phone.style.opacity = String(seg(p, 0.12, 0.5));
+        }
+        const te = seg(p, 0.55, 0.92);
+        const tt = 'translateY(' + lerp(14, 0, easeOut(te)) + 'px)';
+        tags.forEach(t => { t.style.opacity = String(te); t.style.transform = tt; });
+      }
+
+      function progress() {
+        const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64;
+        const rect = scroll.getBoundingClientRect();
+        const range = scroll.offsetHeight - sticky.offsetHeight;
+        if (range <= 0) return 1;
+        return clamp((navH - rect.top) / range, 0, 1);
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { apply(progress()); ticking = false; });
+      }
+
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mq.matches) { apply(1); return; }
+
+      apply(progress());
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      if (mq.addEventListener) {
+        mq.addEventListener('change', ev => {
+          if (ev.matches) { window.removeEventListener('scroll', onScroll); apply(1); }
+        });
       }
     })();
 
