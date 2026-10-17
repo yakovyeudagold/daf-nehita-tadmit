@@ -9,7 +9,7 @@
   <title>KOV. דיגיטל סטודיו — אתרי תדמית פרימיום</title>
   <link rel="icon" href="assets/logo.png" type="image/png">
   <meta name="description" content="דמו מעוצב במלואו לאתר התדמית של העסק שלך, בחינם. משאירים שם וטלפון ומקבלים דמו מותאם.">
-  <meta name="kovkov-build" content="premium-v1">
+  <meta name="kovkov-build" content="hero-morph-v2">
 
   <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website">
@@ -518,7 +518,7 @@
       position: relative;
       text-align: center;
       padding-block: clamp(52px, 10vw, 110px) clamp(40px, 6vw, 70px);
-      overflow: clip;              /* clip (ולא hidden) כדי לא לשבור את ה-sticky של הבמה */
+      overflow: visible;           /* clip/hidden על הורה שוברים position:sticky של הבמה */
     }
     .hero-bg {
       position: absolute;
@@ -555,7 +555,7 @@
        תלת-מימדית קומפקטית אל קומפוזיציה מסודרת ושטוחה. */
     .hero-scroll {
       position: relative;
-      height: 210vh;                 /* טווח הגלילה שעליו מתנגן המורף */
+      height: 280vh;                 /* טווח גלילה ארוך — המורף ברור ונתפס */
       margin-top: clamp(30px, 5vw, 60px);
     }
     .hero-sticky {
@@ -566,6 +566,31 @@
       display: grid;
       place-items: center;
       overflow: clip;                /* חיתוך פנימי בלבד — אין גלישה לדף */
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      z-index: 8;
+      bottom: clamp(10px, 2.5vh, 24px);
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      padding: 8px 16px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      border-radius: 100px;
+      border: 1px solid var(--line-2);
+      background: rgba(8, 8, 12, 0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      pointer-events: none;
+      transition: opacity 0.35s var(--ease);
+      animation: hero-hint-float 2.4s var(--ease-in-out, ease-in-out) infinite;
+    }
+    @keyframes hero-hint-float {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.85; }
+      50%      { transform: translateX(-50%) translateY(6px); opacity: 1; }
     }
     .hero-stage {
       position: relative;
@@ -708,7 +733,7 @@
 
     /* ----- מובייל: מורף קליל יותר, פחות עומק ----- */
     @media (max-width: 860px) {
-      .hero-scroll { height: 175vh; margin-top: 18px; }
+      .hero-scroll { height: 230vh; margin-top: 18px; }
       .hero-sticky { min-height: 360px; }
       .hero-stage { max-height: 78%; perspective: 1100px; }
       .sc-tag { padding: 6px 11px; }
@@ -728,6 +753,7 @@
       }
       .hero-stage { max-height: none; }
       .hero-stage-inner { transform: none; }
+      .hero-scroll-hint { display: none; }
     }
 
     /* ============================================================
@@ -1558,6 +1584,7 @@
         <!-- קומפוזיציית עבודות אמיתיות · מורף גלילה בהשראת אפל -->
         <div class="hero-scroll" id="hero-scroll">
           <div class="hero-sticky">
+            <p class="hero-scroll-hint" id="hero-scroll-hint" aria-hidden="true">גלול</p>
             <div class="hero-stage" aria-label="עבודות נבחרות מהסטודיו">
               <div class="hero-stage-inner" id="hero-stage-inner">
                 <div class="showcase showcase-back showcase-back-1" aria-hidden="true">
@@ -2029,6 +2056,7 @@
       const back2 = inner.querySelector('.showcase-back-2');
       const phone = inner.querySelector('.showcase-phone');
       const tags  = Array.from(inner.querySelectorAll('.sc-tag'));
+      const hint  = document.getElementById('hero-scroll-hint');
 
       const clamp = (v, a, b) => (v < a ? a : (v > b ? b : v));
       const lerp  = (a, b, t) => a + (b - a) * t;
@@ -2038,35 +2066,40 @@
 
       function apply(p) {
         const m  = isMobile();
-        const dz = m ? 0.5 : 1;              /* עומק מופחת במובייל */
+        const dz = m ? 0.55 : 1;             /* עומק מופחת במובייל */
         const e  = easeOut(p);
 
-        /* שכבת-על כללית: הטיה, קנה מידה והיסט שמתיישבים ל-0 */
+        /* שכבת-על: מתחיל מעומק/קטן — נפתח לקומפוזיציה שטוחה */
         inner.style.transform =
-          'rotateX(' + lerp(m ? 10 : 14, 0, e) + 'deg) scale(' + lerp(0.9, 1, e) + ') translateY(' + lerp(m ? 20 : 30, 0, e) + 'px)';
+          'rotateX(' + lerp(m ? 14 : 20, 0, e) + 'deg) scale(' + lerp(0.76, 1, e) + ') translateY(' + lerp(m ? 32 : 48, 0, e) + 'px)';
 
         if (main) {
-          main.style.transform = 'translate3d(0,' + lerp(4, 0, e) + '%,' + (lerp(-40, 0, e) * dz) + 'px) scale(' + lerp(0.96, 1, e) + ')';
-          main.style.opacity = String(lerp(0.4, 1, easeOut(seg(p, 0, 0.22))));
+          main.style.transform =
+            'translate3d(0,' + lerp(10, 4, e) + '%,' + (lerp(-90, 0, e) * dz) + 'px) scale(' + lerp(0.72, 1, e) + ')';
+          main.style.opacity = String(lerp(0.28, 1, easeOut(seg(p, 0, 0.28))));
         }
         if (back1) {
-          const ae = easeOut(seg(p, 0.08, 0.72));
-          back1.style.transform = 'translate3d(' + lerp(-16, 0, ae) + '%,' + lerp(12, 0, ae) + '%,' + (lerp(-20, -60, ae) * dz) + 'px) rotate(' + lerp(0, -5, ae) + 'deg) scale(' + lerp(0.82, 1, ae) + ')';
-          back1.style.opacity = String(seg(p, 0.08, 0.5) * 0.92);
+          const ae = easeOut(seg(p, 0.04, 0.78));
+          back1.style.transform =
+            'translate3d(' + lerp(26, 0, ae) + '%,' + lerp(22, 0, ae) + '%,' + (lerp(-130, -60, ae) * dz) + 'px) rotate(' + lerp(12, -5, ae) + 'deg) scale(' + lerp(0.58, 1, ae) + ')';
+          back1.style.opacity = String(lerp(0, 0.92, seg(p, 0.06, 0.42)));
         }
         if (back2) {
-          const be = easeOut(seg(p, 0.14, 0.8));
-          back2.style.transform = 'translate3d(' + lerp(16, 0, be) + '%,' + lerp(10, 0, be) + '%,' + (lerp(-20, -80, be) * dz) + 'px) rotate(' + lerp(0, 5, be) + 'deg) scale(' + lerp(0.82, 1, be) + ')';
-          back2.style.opacity = String(seg(p, 0.14, 0.52) * 0.92);
+          const be = easeOut(seg(p, 0.08, 0.82));
+          back2.style.transform =
+            'translate3d(' + lerp(-26, 0, be) + '%,' + lerp(20, 0, be) + '%,' + (lerp(-150, -80, be) * dz) + 'px) rotate(' + lerp(-12, 5, be) + 'deg) scale(' + lerp(0.58, 1, be) + ')';
+          back2.style.opacity = String(lerp(0, 0.92, seg(p, 0.1, 0.46)));
         }
         if (phone) {
-          const pe = easeOut(seg(p, 0.12, 0.86));
-          phone.style.transform = 'translate3d(' + lerp(-24, 0, pe) + '%,' + lerp(-18, 0, pe) + '%,' + (lerp(-10, 55, pe) * dz) + 'px) rotateY(' + lerp(24, 0, pe) + 'deg) scale(' + lerp(0.85, 1, pe) + ')';
-          phone.style.opacity = String(seg(p, 0.12, 0.5));
+          const pe = easeOut(seg(p, 0.1, 0.88));
+          phone.style.transform =
+            'translate3d(' + lerp(18, 0, pe) + '%,' + lerp(-32, 0, pe) + '%,' + (lerp(-100, 55, pe) * dz) + 'px) rotateY(' + lerp(32, 0, pe) + 'deg) scale(' + lerp(0.62, 1, pe) + ')';
+          phone.style.opacity = String(lerp(0, 1, seg(p, 0.12, 0.48)));
         }
-        const te = seg(p, 0.55, 0.92);
-        const tt = 'translateY(' + lerp(14, 0, easeOut(te)) + 'px)';
+        const te = seg(p, 0.5, 0.94);
+        const tt = 'translateY(' + lerp(18, 0, easeOut(te)) + 'px)';
         tags.forEach(t => { t.style.opacity = String(te); t.style.transform = tt; });
+        if (hint) hint.style.opacity = String(1 - easeOut(seg(p, 0, 0.18)));
       }
 
       function progress() {
